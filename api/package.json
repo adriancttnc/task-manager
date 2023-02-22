@@ -1,0 +1,30 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "A small task management app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adriancttnc/task-manager.git"
+  },
+  "keywords": [
+    "task",
+    "manager",
+    "MEAN"
+  ],
+  "author": "Adrian Constantinescu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adriancttnc/task-manager/issues"
+  },
+  "homepage": "https://github.com/adriancttnc/task-manager#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "mongoose": "^6.9.3",
+    "morgan": "^1.10.0"
+  }
+}
