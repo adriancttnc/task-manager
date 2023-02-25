@@ -16,12 +16,13 @@
       "skipWords": [
         "req",
         "morgan",
-        "minlength"
+        "minlength",
+        "jsonwebtoken",
+        "bcryptjs"
       ],
       "skipIfMatch": [
-        "eslint-*",
-        "(= require)*"
-    ]
+        "eslint-*"
+      ]
     }]
   },
   "plugins": [
