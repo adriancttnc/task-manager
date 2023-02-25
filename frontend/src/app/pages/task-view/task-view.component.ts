@@ -22,7 +22,7 @@ export class TaskViewComponent implements OnInit {
       if (params['listId']) {
         this.taskService.getTasks(params['listId']).subscribe((tasks: any) => {
           this.tasks = tasks;
-        })
+        });
       };
     });
 
