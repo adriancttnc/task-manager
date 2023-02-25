@@ -2,8 +2,9 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express();
+// eslint-disable-next-line no-unused-vars
 const { mongoose } = require('./db/mongoose');
-const port = process.env.PORT || 3000;
+const port = 3000;
 
 // Load in the mongoose Models
 const { List, Task, User} =  require('./db/models');
@@ -79,7 +80,7 @@ app.patch('/lists/:id', (req, res) => {
   List.findOneAndUpdate({ _id: req.params.id }, {
     $set: req.body
   })
-  .then((_) => {
+  .then(() => {
     res.sendStatus(200);
   });
 });
@@ -154,7 +155,7 @@ app.patch('/lists/:listId/tasks/:taskId', (req, res) => {
   }, {
     $set: req.body
   })
-    .then((_) => {
+    .then(() => {
       res.send({ message: 'Updated Successfully' });
     });
 });

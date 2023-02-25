@@ -29,5 +29,9 @@
     "lodash": "^4.17.21",
     "mongoose": "^6.9.3",
     "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0",
+    "eslint-plugin-spellcheck": "^0.0.20"
   }
 }

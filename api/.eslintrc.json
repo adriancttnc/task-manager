@@ -1,0 +1,30 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
+  "extends": "eslint:recommended",
+  "overrides": [
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "rules": {
+    "no-extra-semi": 0,
+    "spellcheck/spell-checker": ["warn", {
+      "skipWords": [
+        "req",
+        "morgan",
+        "minlength"
+      ],
+      "skipIfMatch": [
+        "eslint-*",
+        "(= require)*"
+    ]
+    }]
+  },
+  "plugins": [
+    "spellcheck"
+  ]
+}
