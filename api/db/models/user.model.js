@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 // JWT Secret
+// eslint-disable-next-line spellcheck/spell-checker
 const jwtSecret = "51778657246321226641fsdklafjasdkljfsklfjd7148924065";
 
 const UserSchema = new mongoose.Schema({
@@ -95,7 +96,7 @@ UserSchema.methods.createSession = function () {
 ************************************************************/
 
 UserSchema.statics.findByIdAndToken = function (_id, token) {
-  // Finds user by id and token. Used in auth middeware (verifySession).
+  // Finds user by id and token. Used in auth middleware (verifySession).
   const user = this;
 
   return user.findOne({
@@ -142,12 +143,12 @@ UserSchema.statics.hasRefreshTokenExpired = (expiresAt) => {
 // Before a user document is saved, this code runs.
 UserSchema.pre('save', function (next) {
   let user = this;
-  let costFacor = 10;
+  let costFactor = 10;
 
   if (user.isModified('password')) {
     // If the password field has been edited/changed then run this code.
     // Generate the salt and hash the password.
-    bcrypt.genSalt(costFacor, (err, salt) => {
+    bcrypt.genSalt(costFactor, (err, salt) => {
       bcrypt.hash(user.password, salt, (err, hash) => {
         user.password = hash;
         next();

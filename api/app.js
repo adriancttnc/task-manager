@@ -31,6 +31,55 @@ app.use(function (req, res, next) {
   next();
 });
 
+// Verify Refresh Token Middleware (which will be verifying the session)
+let verifySession = (req, res, next) => {
+  // Grab the refresh token from the request header.
+  let refreshToken = req.header('x-refresh-token');
+
+  // Grab the _id from the request header.
+  let _id = req.header('_id');
+
+  User.findByIdAndToken(_id, refreshToken)
+    .then((user) => {
+      if (!user) {
+        // User couldn't be found.
+        return Promise.reject({
+          'error': 'User not found. Make sure that the refresh token and user id are correct.'
+        })
+      } else {
+        // The user was found, therefore the refreshToken exists in the database but we still have to check if it has expired.
+        req.user_id = user._id;
+        req.userObject = user;
+        req.refreshToken = refreshToken;
+
+        let isSessionValid = false;
+
+        user.sessions.forEach((session) => {
+          if (session.token === refreshToken) {
+            if (User.hasRefreshTokenExpired(session.expiresAt) === false) {
+              // Refresh token has not expired.
+              isSessionValid = true;
+            };
+          };
+        });
+
+        if (isSessionValid) {
+          // The session is valid. Call next() to continue with processing this web request.
+          next();
+        } else {
+          // The session is not valid.
+          return Promise.reject({
+            'error': 'Refresh token has expired or the session is invalid.'
+          });
+        };
+      };
+    })
+    .catch((err) => {
+      res.status(401).send(err);
+    })
+}
+
+
 /************************************************************
  ***********************ROUTE HANDLERS***********************
 ************************************************************/
@@ -148,7 +197,7 @@ app.post('/lists/:listId/tasks', (req, res) => {
  * Purpose: Update a specific task
  */
 app.patch('/lists/:listId/tasks/:taskId', (req, res) => {
-  // We want to update an existing task speficied by taskId.
+  // We want to update an existing task specified by taskId.
   Task.findOneAndUpdate({
     _id: req.params.taskId,
     _listId: req.params.listId
@@ -192,7 +241,7 @@ app.post('/users', (req, res) => {
       return newUser.createSession();
     })
     .then((refreshToken) => {
-      // Session has been created succesfully and refreshToken returned. Now we generate an access auth token for the user.
+      // Session has been created successfully and refreshToken returned. Now we generate an access auth token for the user.
       return newUser.generateAccessAuthToken()
         .then((accessToken) => {
           // Access auth token generated successfully. Now we return an object containing the auth tokens.
@@ -241,6 +290,20 @@ app.post('/users/login', (req, res) => {
     .catch((err) => {
       res.status(400).send(err);
     });
+});
+
+/** GET /users/me/access-token
+ * Purpose: Generates and returns an access token
+ */
+app.get('/users/me/access-token', verifySession, (req, res) => {
+  // We know that the user/caller is authenticated and we have the user_id and userObject available to us.
+  req.userObject.generateAccessAuthToken()
+    .then((accessToken) =>{
+      res.header('x-access-token', accessToken).send({ accessToken });
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+    })
 });
 
 
