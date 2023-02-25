@@ -20,6 +20,7 @@
 }
 
 .task-list-container {
+  position: relative;
   display: flex;
   flex-grow: 1;
   flex-direction: column;
@@ -84,5 +85,19 @@
   &.complete {
     text-decoration: line-through;
     opacity: 0.8;
+  }
+}
+
+.circle-add-button {
+  height: 60px;
+  width: 60px;
+  position: absolute;
+  background: $primary;
+  border-radius: 50%;
+  bottom: 35px;
+  right: 25px;
+
+  .circle-add-button-icon {
+    transform: scale(2);
   }
 }
