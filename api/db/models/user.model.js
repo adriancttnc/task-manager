@@ -47,7 +47,7 @@ UserSchema.methods.generateAccessAuthToken = function () {
   const user = this;
   return new Promise((resolve, reject) => {
     // Create the JSON Web Token and return that.
-    jwt.sign({_id: user._id.toHexString() }, jwtSecret, { expiresIn: '15m' }, (err, token) => {
+    jwt.sign({ _id: user._id.toHexString() }, jwtSecret, { expiresIn: '15m' }, (err, token) => {
       if (!err) {
         // If there isn't an error.
         resolve(token);
@@ -111,7 +111,7 @@ UserSchema.statics.findByCredentials = function (email, password) {
       if (!user) {
         return Promise.reject();
       } else {
-        return new Promise((reolve, reject) => {
+        return new Promise((resolve, reject) => {
           bcrypt.compare(password, user.password, (err, res) => {
             if (res) {
               resolve(user);
@@ -170,7 +170,7 @@ let saveSessionToDatabase = (user, refreshToken) => {
     user.sessions.push({ 'token': refreshToken, expiresAt });
 
     user.save()
-      .then((refreshToken) => {
+      .then(() => {
         return resolve(refreshToken);
       })
       .catch((err) => {
