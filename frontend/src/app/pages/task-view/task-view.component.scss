@@ -65,13 +65,12 @@
 
 .task {
   background: white;
-  padding: 15px 20px;
+  // padding: 15px 20px;
   border-radius: 5px;
   margin-top: 10px;
 
-  &:not(.complete) {
     cursor: pointer;
-    transition: box-shadow 0.2s ease, transform 0.2 ease;
+    transition: box-shadow 0.2s ease, transform 0.2s ease-in-out;
   
     &:active {
       transform: scale(.95);
@@ -80,11 +79,17 @@
     &:hover {
       box-shadow: 0 0 0 5px #eeeeee;
     }
+
+  &:not(.completed) {
+    padding: 15px 20px;
+    transition: padding 0.2s ease-in-out;
   }
 
-  &.complete {
+  &.completed {
     text-decoration: line-through;
-    opacity: 0.8;
+    opacity: 0.6;
+    padding: 5px 20px;
+    transition: padding 0.2s ease-in-out;
   }
 }
 
