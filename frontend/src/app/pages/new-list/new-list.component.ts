@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { TaskService } from 'src/app/task.service';
 
 @Component({
@@ -9,13 +10,15 @@ import { TaskService } from 'src/app/task.service';
 export class NewListComponent {
 
   constructor (
-    private taskService: TaskService
+    private taskService: TaskService,
+    private router: Router
   ) {}
 
-  createList (title: string) {
+  public createList (title: string) {
     this.taskService.createList(title)
-      .subscribe((response) => {
-        console.log('new-list-comp-resp', response);
+      .subscribe((list: any) => {
+        // Now we navigate to /lists/list._id
+        this.router.navigate(['/lists', list._id]);
       })
   }
 }
