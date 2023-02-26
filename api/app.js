@@ -27,7 +27,8 @@ app.use(function (req, res, next) {
       res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
       res.header('Access-Control-Allow-Methods', 'GET, HEAD, POST, PUT, DELETE, PATCH');
       return res.status(200).json({});
-  }
+    }
+    res.header('Access-Control-Expose-Headers', 'x-access-token, x-refresh-token');
   next();
 });
 
