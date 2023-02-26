@@ -25,7 +25,7 @@ export class TaskViewComponent implements OnInit {
         this.taskService.getTasks(params['listId']).subscribe((tasks: Task[]) => {
           this.tasks = tasks;
         });
-      };
+      }
     });
 
     this.taskService.getLists().subscribe((lists: List[]) => {
@@ -35,7 +35,7 @@ export class TaskViewComponent implements OnInit {
 
   onTaskClick (task: Task) {
     // We want to set the task to completed
-    this.taskService.changeTaskState(task).subscribe((_) => {
+    this.taskService.changeTaskState(task).subscribe(() => {
       // Once the task has been set to completed successfully.
         task.completed = !task.completed;
     });

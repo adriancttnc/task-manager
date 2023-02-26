@@ -6,7 +6,7 @@ mongoose.Promise = global.Promise;
 
 mongoose.connect('mongodb://127.0.0.1:27017/TaskManager', { useNewUrlParser: true })
   .then(() => {
-    console.log('Connected to MongoDB succesfully');
+    console.log('Connected to MongoDB successfully');
   })
   .catch((err) => {
     console.log(`Not Connected to the Database ERROR! ${err}`);

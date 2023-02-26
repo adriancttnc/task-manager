@@ -9,7 +9,7 @@ import { TaskService } from 'src/app/task.service';
 })
 export class NewTaskComponent implements OnInit {
 
-  private _listId: string = '';
+  private _listId = '';
 
   constructor (
     private taskService: TaskService,
@@ -26,11 +26,10 @@ export class NewTaskComponent implements OnInit {
   }
 
   createTask (title: string) {
-    this.taskService.createTask(title, this._listId).subscribe((task: any)  => {
+    this.taskService.createTask(title, this._listId).subscribe(()  => {
       // We use relative routing to go back one step, onto the lists page
       this.router.navigate(['../'],  { relativeTo: this.route });
     });
-  };
-
+  }
 
 }

@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { List } from './models/list.model';
 import { Task } from './models/task.model';
 import { WebRequestService } from './web-request.service';
 

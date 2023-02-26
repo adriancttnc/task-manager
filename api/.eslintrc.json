@@ -11,14 +11,14 @@
     "ecmaVersion": "latest"
   },
   "rules": {
-    "no-extra-semi": 0,
     "spellcheck/spell-checker": ["warn", {
       "skipWords": [
         "req",
         "morgan",
         "minlength",
         "jsonwebtoken",
-        "bcryptjs"
+        "bcryptjs",
+        "mongodb"
       ],
       "skipIfMatch": [
         "eslint-*"

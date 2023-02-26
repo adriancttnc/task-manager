@@ -59,8 +59,8 @@ let verifySession = (req, res, next) => {
             if (User.hasRefreshTokenExpired(session.expiresAt) === false) {
               // Refresh token has not expired.
               isSessionValid = true;
-            };
-          };
+            }
+          }
         });
 
         if (isSessionValid) {
@@ -71,8 +71,8 @@ let verifySession = (req, res, next) => {
           return Promise.reject({
             'error': 'Refresh token has expired or the session is invalid.'
           });
-        };
-      };
+        }
+      }
     })
     .catch((err) => {
       res.status(401).send(err);

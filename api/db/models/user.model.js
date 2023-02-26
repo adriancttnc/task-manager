@@ -55,7 +55,7 @@ UserSchema.methods.generateAccessAuthToken = function () {
       } else {
         // There is an error.
         reject();
-      };
+      }
     });
   });
 };
@@ -118,10 +118,10 @@ UserSchema.statics.findByCredentials = function (email, password) {
               resolve(user);
             } else {
               reject();
-            };
+            }
           });
         });
-      };
+      }
     });
 };
 
@@ -156,7 +156,7 @@ UserSchema.pre('save', function (next) {
     });
   } else {
     next();
-  };
+  }
 });
 
 /************************************************************
