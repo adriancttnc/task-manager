@@ -24,11 +24,14 @@
       "skipWords": [
         "req",
         "morgan",
-        "minlength"
+        "minlength",
+        "styleUrls",
+        "Urls",
+        "frontend",
+        "uri"
       ],
       "skipIfMatch": [
-        "eslint-*",
-        "(= require)*"
+        "eslint-*"
     ]
     }]
   }
