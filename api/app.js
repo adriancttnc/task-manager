@@ -9,6 +9,7 @@ const port = 3000;
 // Load in the mongoose Models
 const { List, Task, User} =  require('./db/models');
 
+const jwt = require('jsonwebtoken');
 
 
 /************************************************************
@@ -31,6 +32,23 @@ app.use(function (req, res, next) {
     res.header('Access-Control-Expose-Headers', 'x-access-token, x-refresh-token');
   next();
 });
+
+// Check whether the request has a valid JWT token.
+let authenticate = (req, res, next) => {
+  let token = req.header('x-access-token');
+
+  // Verify the JWT
+  jwt.verify(token, User.getJWTSecret(), (err, decoded) => {
+    if (err) {
+      // JWT is invalid  -  do not authenticate.
+      res.status(401).send();
+    } else {
+      // JWT is valid.
+      req.user_id = decoded._id;
+      next();
+    }
+  });
+}
 
 // Verify Refresh Token Middleware (which will be verifying the session)
 let verifySession = (req, res, next) => {
@@ -94,9 +112,11 @@ let verifySession = (req, res, next) => {
  * GET /lists
  * Purpose: Get all lists
  */
-app.get('/lists', (req, res) => {
-  // We want to return an array of all the lists in the database.
-  List.find({})
+app.get('/lists', authenticate, (req, res) => {
+  // We want to return an array of all the lists in the database that belong to the authenticated user.
+  List.find({
+    _userId: req.user_id
+  })
     .then((lists) => {
       res.send(lists)
     });
