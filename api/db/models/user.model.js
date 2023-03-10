@@ -95,6 +95,10 @@ UserSchema.methods.createSession = function () {
  ***********************MODEL METHODS************************
 ************************************************************/
 
+UserSchema.statics.getJWTSecret = () => {
+  return jwtSecret;
+}
+
 UserSchema.statics.findByIdAndToken = function (_id, token) {
   // Finds user by id and token. Used in auth middleware (verifySession).
   const user = this;
