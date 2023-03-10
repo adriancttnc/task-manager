@@ -164,6 +164,9 @@ app.delete('/lists/:id', (req, res) => {
   List.findOneAndRemove({ _id: req.params.id })
     .then((removedListDoc) => {
       res.send(removedListDoc)
+
+      // Delete all the tasks that are in the deleted list.
+      deleteTasksFromList(removedListDoc._id);
     });
 });
 
@@ -327,6 +330,17 @@ app.get('/users/me/access-token', verifySession, (req, res) => {
     })
 });
 
+/************************************************************
+ ***********************HELPER METHODS***********************
+************************************************************/
+
+let deleteTasksFromList = (_listId) => {
+  Task.deleteMany({
+    _listId
+  }).then(() => {
+    console.log(`Tasks for the list ${_listId} have been removed.`);
+  })
+};
 
 app.listen(3000, () => {
   console.log(`Running the server on port: ${port}.`);
