@@ -58,10 +58,7 @@ let verifySession = (req, res, next) => {
   // Grab the _id from the request header.
   let _id = req.header('_id');
 
-  User.findByIdAndToken({
-    _id,
-    refreshToken
-  })
+  User.findByIdAndToken(_id, refreshToken)
     .then((user) => {
       if (!user) {
         // User couldn't be found.
@@ -365,10 +362,7 @@ app.post('/users/login', (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
 
-  User.findByCredentials({
-    email,
-    password
-  })
+  User.findByCredentials(email, password)
     .then((user) => {
       return user.createSession()
         .then((refreshToken) => {
