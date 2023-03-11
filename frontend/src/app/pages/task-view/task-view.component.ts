@@ -49,7 +49,7 @@ export class TaskViewComponent implements OnInit {
 
   onDeleteList () {
     // We want to delete the selected list.
-    this.taskService.deleteList(this.selectedListId).subscribe((res) => {
+    this.taskService.deleteList(this.selectedListId).subscribe(() => {
       // Remove the list from the local array.
       this.lists = this.lists.filter(list => list._id !== this.selectedListId);
       // Blank selectedListId.
