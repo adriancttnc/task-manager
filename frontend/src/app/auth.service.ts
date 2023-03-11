@@ -21,37 +21,42 @@ export class AuthService {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         tap((res: HttpResponse<any>) => {
           // The auth tokens will be in the header of this response
-          this.setSession(res.body._id, res.headers.get('x-access-token') || '', res.headers.get('x-refresh-token') || '');
+          this.setSession(
+            res.body._id,
+            res.headers.get('x-access-token') || '',
+            res.headers.get('x-refresh-token') || ''
+          );
         })
       );
   }
 
   logout () {
     this.removeSession();
+    this.router.navigateByUrl('/login');
   }
 
-  getAccessToken () {
-    return localStorage.getItem('access-token');
+  public getAccessToken () {
+    return localStorage.getItem('x-access-token');
   }
 
   setAccessToken (accessToken: string) {
-    localStorage.setItem('access-token', accessToken);
+    localStorage.setItem('x-access-token', accessToken);
   }
 
   getRefreshToken () {
-    return localStorage.getItem('refresh-token');
+    return localStorage.getItem('x-refresh-token');
   }
 
   private setSession (userId: string, accessToken: string, refreshToken: string) {
     localStorage.setItem('user-id', userId);
-    localStorage.setItem('access-token', accessToken);
-    localStorage.setItem('refresh-token', refreshToken);
+    localStorage.setItem('x-access-token', accessToken);
+    localStorage.setItem('x-refresh-token', refreshToken);
   }
 
   private removeSession () {
     localStorage.removeItem('user-id');
-    localStorage.removeItem('access-token');
-    localStorage.removeItem('refresh-token');
+    localStorage.removeItem('x-access-token');
+    localStorage.removeItem('x-refresh-token');
   }
 
 }
