@@ -21,6 +21,11 @@ export class TaskService {
     return this.webReqService.post('lists', { title });
   }
 
+  deleteList (listId: string) {
+    // we want to send a web request to delete a list.
+    return this.webReqService.delete(`lists/${listId}`)
+  }
+
   getTasks (listId: string) {
     // We want to send a web request to get all the tasks for a specific list.
     return this.webReqService.get(`lists/${listId}/tasks`)
