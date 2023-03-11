@@ -435,3 +435,7 @@ app.listen(3000, () => {
 // ToDo - Add unitTesting.
 // ToDo - Add separate webRequest functions for lists and tasks.
 // ToDo - Ensure there is nothing of type 'any'.
+// ToDo - Implement Logout.
+// ToDo - Ensure action completion is confirmed visually to the user.
+// ToDo - Add ability to logout of all sessions.
+// ToDo - Add ability to see all current sessions with some details (device, location, time, remaining lifespan).
