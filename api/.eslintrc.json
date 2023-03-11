@@ -18,7 +18,8 @@
         "minlength",
         "jsonwebtoken",
         "bcryptjs",
-        "mongodb"
+        "mongodb",
+        "cors"
       ],
       "skipIfMatch": [
         "eslint-*"
