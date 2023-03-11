@@ -41,6 +41,12 @@ export class TaskService {
     return this.webReqService.post(`lists/${listId}/tasks`, { title });
   }
 
+
+  deleteTask (task: Task) {
+    // We want to send a web request to delete a task for a specific list.
+    return this.webReqService.delete(`lists/${task._listId}/tasks/${task._id}`);
+  }
+
   changeTaskState (task: Task) {
     return this.webReqService.patch(`lists/${task._listId}/tasks/${task._id}`, { completed: !task.completed });
   }
