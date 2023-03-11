@@ -28,7 +28,8 @@
         "styleUrls",
         "Urls",
         "frontend",
-        "uri"
+        "uri",
+        "signup"
       ],
       "skipIfMatch": [
         "eslint-*"

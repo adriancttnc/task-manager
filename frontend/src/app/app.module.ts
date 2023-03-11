@@ -11,13 +11,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { NewTaskComponent } from './pages/new-task/new-task.component';
 import { LoginComponent } from './pages/login/login.component'
 import { WebReqInterceptor } from './web-req.interceptor.service';
+import { SignupPageComponent } from './pages/signup-page/signup-page.component';
 @NgModule({
   declarations: [
     AppComponent,
     TaskViewComponent,
     NewListComponent,
     NewTaskComponent,
-    LoginComponent
+    LoginComponent,
+    SignupPageComponent
   ],
   imports: [
     BrowserModule,
