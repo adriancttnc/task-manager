@@ -1,4 +1,5 @@
-import { HttpResponse } from '@angular/common/http';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { shareReplay, tap } from 'rxjs';
@@ -11,7 +12,8 @@ export class AuthService {
 
   constructor(
     private webService: WebRequestService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) { }
 
   login (email: string, password: string) {
@@ -26,6 +28,7 @@ export class AuthService {
             res.headers.get('x-access-token') || '',
             res.headers.get('x-refresh-token') || ''
           );
+          this.router.navigateByUrl('/lists');
         })
       );
   }
@@ -35,16 +38,20 @@ export class AuthService {
     this.router.navigateByUrl('/login');
   }
 
-  public getAccessToken () {
+  getAccessToken () {
     return localStorage.getItem('x-access-token');
   }
 
-  setAccessToken (accessToken: string) {
-    localStorage.setItem('x-access-token', accessToken);
+  setAccessToken (accessToken: string | null) {
+    localStorage.setItem('x-access-token', accessToken!);
   }
 
   getRefreshToken () {
     return localStorage.getItem('x-refresh-token');
+  }
+
+  getUserId () {
+    return localStorage.getItem('user-id');
   }
 
   private setSession (userId: string, accessToken: string, refreshToken: string) {
@@ -57,6 +64,22 @@ export class AuthService {
     localStorage.removeItem('user-id');
     localStorage.removeItem('x-access-token');
     localStorage.removeItem('x-refresh-token');
+  }
+
+  getNewAccessToken () {
+    return this.http.get(
+      `${this.webService.ROOT_URL}/users/me/access-token`, {
+        headers: {
+          'x-refresh-token': this.getRefreshToken()!,
+          '_id': this.getUserId()!
+      },
+      observe: 'response'
+  }).pipe(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tap((res: HttpResponse<any>) => {
+      this.setAccessToken(res.headers.get('x-access-token'))
+    })
+  )
   }
 
 }
