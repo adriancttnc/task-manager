@@ -1,6 +1,5 @@
-import { AfterViewInit, Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Task } from 'src/app/models/task.model';
 import { TaskService } from 'src/app/task.service';
 
@@ -9,34 +8,29 @@ import { TaskService } from 'src/app/task.service';
   templateUrl: './new-task.component.html',
   styleUrls: ['./new-task.component.scss']
 })
-export class NewTaskComponent implements OnInit, AfterViewInit {
+export class NewTaskComponent implements OnInit {
 
   @ViewChild('taskTitleInput', { static: true }) input: ElementRef = {} as ElementRef;
-
 
   constructor (
     @Inject(MAT_DIALOG_DATA) private data: { _listId: string },
     private dialogRef: MatDialogRef<NewTaskComponent>,
     private taskService: TaskService,
-    private route: ActivatedRoute,
-    private router: Router
   ) {}
 
   ngOnInit (): void {
+    // Look out for any keys pressed.
     this.dialogRef.keydownEvents().subscribe((event) => {
+      // If the 'Enter' key is pressed, then create the task.
       if (event.key === 'Enter') {
         this.createTask(this.input.nativeElement.value);
       }
     });
   }
 
-  ngAfterViewInit() {
-    console.log(this.input.nativeElement.value);
-  }
-
   createTask (title: string) {
     this.taskService.createTask(title, this.data._listId).subscribe((response: Task)  => {
-      // We use relative routing to go back one step, onto the lists page
+      // If we've got a task id (response._id) it means we've created the task successfully. Close the dialog and return the task.
       if (response._id) {
         this.closeDialog(response);
       }
