@@ -18,7 +18,9 @@ export class NewListComponent implements OnInit {
   ) {}
 
   ngOnInit (): void {
+    // Look out for any keys pressed.
     this.dialogRef.keydownEvents().subscribe((event) => {
+      // If the 'Enter' key is pressed, then create the list.
       if (event.key === 'Enter') {
         this.createList(this.input.nativeElement.value);
       }
