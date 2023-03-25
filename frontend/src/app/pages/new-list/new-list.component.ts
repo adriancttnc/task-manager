@@ -31,7 +31,7 @@ export class NewListComponent implements OnInit {
     this.taskService.createList(title).subscribe((response: List) => {
       // If we've got a list id (response._id) it means we've created the list successfully. Close the dialog and return the list.
         if (response._id) {
-        this.dialogRef.close(response);
+        this.closeDialog(response);
       }
       return response;
     });

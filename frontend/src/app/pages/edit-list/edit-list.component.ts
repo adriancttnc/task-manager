@@ -32,7 +32,7 @@ export class EditListComponent implements OnInit {
     this.taskService.updateList(this.data._listId, title).subscribe((response: List) => {
       // If we've got a list id (response._id) it means we've updated the list successfully. Close the dialog and return the list.
       if (response?._id) {
-        this.dialogRef.close(response);
+        this.closeDialog(response);
       }
       return response;
     });
