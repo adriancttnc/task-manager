@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { List } from 'src/app/models/list.model';
 import { Task } from 'src/app/models/task.model';
+import { ModalService } from 'src/app/shared/modal.service';
 import { TaskService } from 'src/app/task.service';
+import { NewTaskComponent } from '../new-task/new-task.component';
 
 @Component({
   selector: 'app-task-view',
@@ -19,7 +21,8 @@ export class TaskViewComponent implements OnInit {
   constructor (
     private taskService: TaskService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -65,6 +68,17 @@ export class TaskViewComponent implements OnInit {
       // Remove the listId from the URL.
       this.router.navigate([''], { queryParams: {} });
     });
+  }
+
+  addNewTask (listId: string) {
+    // Open a modal to add a new task.
+    this.modalService.openModal(NewTaskComponent, { data: { _listId: listId } })
+      .afterClosed().subscribe((response: Task) => {
+        // If we have a new task (response._id is present) then add it to our array.
+        if (response?._id) {
+          this.tasks?.push(response);
+        }
+      });
   }
 
 }

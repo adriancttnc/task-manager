@@ -4,7 +4,6 @@ import { EditListComponent } from './pages/edit-list/edit-list.component';
 import { EditTaskComponent } from './pages/edit-task/edit-task.component';
 import { LoginComponent } from './pages/login/login.component';
 import { NewListComponent } from './pages/new-list/new-list.component';
-import { NewTaskComponent } from './pages/new-task/new-task.component';
 import { SignupPageComponent } from './pages/signup-page/signup-page.component';
 import { TaskViewComponent } from './pages/task-view/task-view.component';
 
@@ -16,8 +15,7 @@ const routes: Routes = [
   { path: 'lists', component: TaskViewComponent },
   { path: 'lists/:listId/edit', component: EditListComponent },
   { path: 'lists/:listId', component: TaskViewComponent },
-  { path: 'lists/:listId/tasks/:taskId/edit', component: EditTaskComponent },
-  { path: 'lists/:listId/new-task', component: NewTaskComponent }
+  { path: 'lists/:listId/tasks/:taskId/edit', component: EditTaskComponent }
 ];
 
 @NgModule({

@@ -61,7 +61,8 @@
 
         <h3 class="empty-state-text is-4" *ngIf="tasks.length === 0">There are no tasks in this list</h3>
 
-        <button class="circle-add-button button is-primary" routerLink="./new-task">
+        <!-- <button class="circle-add-button button is-primary" routerLink="./new-task"> -->
+        <button class="circle-add-button button is-primary" (click)="addNewTask(selectedListId)">
           <mat-icon class="circle-add-button-icon has-text-white">add</mat-icon>
         </button>
       </div>
