@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { List } from 'src/app/models/list.model';
 import { TaskService } from 'src/app/task.service';
 
@@ -8,18 +8,36 @@ import { TaskService } from 'src/app/task.service';
   templateUrl: './new-list.component.html',
   styleUrls: ['./new-list.component.scss']
 })
-export class NewListComponent {
+export class NewListComponent implements OnInit {
+
+  @ViewChild('listTitleInput', { static: true}) input: ElementRef = {} as ElementRef;
 
   constructor (
+    private dialogRef: MatDialogRef<NewListComponent>,
     private taskService: TaskService,
-    private router: Router
   ) {}
 
+  ngOnInit (): void {
+    // Look out for any keys pressed.
+    this.dialogRef.keydownEvents().subscribe((event) => {
+      // If the 'Enter' key is pressed, then create the list.
+      if (event.key === 'Enter') {
+        this.createList(this.input.nativeElement.value);
+      }
+    });
+  }
+
   public createList (title: string) {
-    this.taskService.createList(title)
-      .subscribe((list: List) => {
-        // Now we navigate to /lists/list._id
-        this.router.navigate(['/lists', list._id]);
-      })
+    this.taskService.createList(title).subscribe((response: List) => {
+      // If we've got a list id (response._id) it means we've created the list successfully. Close the dialog and return the list.
+        if (response._id) {
+        this.closeDialog(response);
+      }
+      return response;
+    });
+  }
+
+  public closeDialog (data?: List) {
+    this.dialogRef.close(data);
   }
 }

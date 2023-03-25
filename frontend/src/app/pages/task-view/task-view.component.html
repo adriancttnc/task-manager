@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <button class="button is-primary has-text-white" routerLink="/new-list">+ New List</button>
+      <button class="button is-primary has-text-white" (click)="addNewList()">+ New List</button>
 
     </div>
     <div class="task-list-container has-background-light">
@@ -36,7 +36,7 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu4" role="menu">
               <div class="dropdown-content">
-                <a class="dropdown-item" [routerLink]="['/lists', selectedListId, 'edit']">Edit</a>
+                <a class="dropdown-item" (click)="editList(selectedListId)">Edit</a>
                 <a class="dropdown-item has-text-danger" (click)="onDeleteList()">Delete</a>
               </div>
             </div>
@@ -48,12 +48,12 @@
             <p>{{ task.title }}</p>
           </div>
           <div class="task-buttons">
-            <button class="button is-danger" style="margin-right: 10px" (click)="onTaskDelete(task)">
+            <button class="button is-danger" style="margin-right: 10px" (click)="onTaskDelete(task, $event)">
               <div class="icon">
                 <i class="fas fa-trash"></i>
               </div>
             </button>
-            <button class="button" [routerLink]="['/lists', selectedListId, 'tasks', task._id, 'edit']">
+            <button class="button" (click)="editTask(task, $event)">
               <div class="icon"><i class="fas fa-pen"></i></div>
             </button>
           </div>
@@ -61,7 +61,7 @@
 
         <h3 class="empty-state-text is-4" *ngIf="tasks.length === 0">There are no tasks in this list</h3>
 
-        <button class="circle-add-button button is-primary" routerLink="./new-task">
+        <button class="circle-add-button button is-primary" (click)="addNewTask(selectedListId)">
           <mat-icon class="circle-add-button-icon has-text-white">add</mat-icon>
         </button>
       </div>

@@ -14,6 +14,7 @@ import { WebReqInterceptor } from './web-req.interceptor.service';
 import { SignupPageComponent } from './pages/signup-page/signup-page.component';
 import { EditListComponent } from './pages/edit-list/edit-list.component';
 import { EditTaskComponent } from './pages/edit-task/edit-task.component';
+import { MatDialogModule } from '@angular/material/dialog';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +31,8 @@ import { EditTaskComponent } from './pages/edit-task/edit-task.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: WebReqInterceptor, multi: true }

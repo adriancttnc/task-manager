@@ -7,7 +7,7 @@
     <input #taskTitleInput type="text" class="input has-background-light is-medium" placeholder="New task name...">
     <br><br>
     <div class="buttons is-right">
-      <button class="button is-medium" [routerLink]="['/lists', listId]">Cancel</button>
+      <button class="button is-medium" (click)="closeDialog()">Cancel</button>
       <button class="button is-primary is-medium has-text-white" (click)="updateTask(taskTitleInput.value)">Save</button>
     </div>
 
