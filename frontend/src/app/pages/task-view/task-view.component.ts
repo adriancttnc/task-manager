@@ -4,6 +4,7 @@ import { List } from 'src/app/models/list.model';
 import { Task } from 'src/app/models/task.model';
 import { ModalService } from 'src/app/shared/modal.service';
 import { TaskService } from 'src/app/task.service';
+import { EditListComponent } from '../edit-list/edit-list.component';
 import { NewListComponent } from '../new-list/new-list.component';
 import { NewTaskComponent } from '../new-task/new-task.component';
 
@@ -91,6 +92,21 @@ export class TaskViewComponent implements OnInit {
           this.lists.push(response);
         }
       })
+  }
+
+  editList (listId: string) {
+    this.modalService.openModal(EditListComponent, { data: { _listId: listId } })
+      .afterClosed().subscribe((response: List) => {
+        // Ensure we've got a response first.
+        if (response) {
+          // Get the index of our list.
+          const indexToUpdate = this.lists.findIndex(list => list._id === response._id);
+          // Check if title has been changed successfully.
+          if (this.lists[indexToUpdate].title !== response.title) {
+            this.lists[indexToUpdate] = response;
+          }
+        }
+      });
   }
 
 }

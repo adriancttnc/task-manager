@@ -160,9 +160,11 @@ app.patch('/lists/:id', authenticate, (req, res) => {
     _userId: req.user_id
   }, {
     $set: req.body
+  }, {
+    new: true
   })
-  .then(() => {
-    res.send({ message: 'Updated Successfully' });
+  .then((listDoc) => {
+    res.send(listDoc);
   });
 });
 

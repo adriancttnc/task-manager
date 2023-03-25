@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { List } from 'src/app/models/list.model';
 import { TaskService } from 'src/app/task.service';
 
 @Component({
@@ -9,25 +10,35 @@ import { TaskService } from 'src/app/task.service';
 })
 export class EditListComponent implements OnInit {
 
-  listId = '';
+  @ViewChild('listTitleInput', { static: true }) input: ElementRef = {} as ElementRef;
 
   constructor (
-    private route: ActivatedRoute,
-    private taskService: TaskService,
-    private router: Router
+    @Inject(MAT_DIALOG_DATA) private data: { _listId: string },
+    private dialogRef: MatDialogRef<EditListComponent>,
+    private taskService: TaskService
   ) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params: Params) => {
-      if (params['listId']) {
-        this.listId = params['listId'];
+    // Look out for any keys pressed.
+    this.dialogRef.keydownEvents().subscribe((event) => {
+      // If the 'Enter' key is pressed, then create the list.
+      if (event.key === 'Enter') {
+        this.updateList(this.input.nativeElement.value);
       }
     });
   }
 
   updateList (title: string) {
-    this.taskService.updateList(this.listId, title).subscribe(() => {
-      this.router.navigate(['/lists', this.listId]);
+    this.taskService.updateList(this.data._listId, title).subscribe((response: List) => {
+      // If we've got a list id (response._id) it means we've updated the list successfully. Close the dialog and return the list.
+      if (response?._id) {
+        this.dialogRef.close(response);
+      }
+      return response;
     });
+  }
+
+  closeDialog(data?: List) {
+    this.dialogRef.close(data);
   }
 }
