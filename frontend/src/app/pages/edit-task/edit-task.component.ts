@@ -21,7 +21,7 @@ export class EditTaskComponent implements OnInit {
   ngOnInit(): void {
     // Look out for any keys pressed.
     this.dialogRef.keydownEvents().subscribe((event) => {
-      // If the 'Enter' key is pressed, then create the list.
+      // If the 'Enter' key is pressed, then update the task.
       if (event.key === 'Enter') {
         this.updateTask(this.input.nativeElement.value);
       }
