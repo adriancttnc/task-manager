@@ -47,10 +47,10 @@ html, body {
   padding: 35px;
 }
 
-.title {
+::ng-deep .title {
   font-family: 'Lato';
   font-size: 28px;
-  text-transform: uppercase;
+  // text-transform: uppercase;
   letter-spacing: 2px;
 }
 
