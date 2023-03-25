@@ -4,6 +4,7 @@ import { List } from 'src/app/models/list.model';
 import { Task } from 'src/app/models/task.model';
 import { ModalService } from 'src/app/shared/modal.service';
 import { TaskService } from 'src/app/task.service';
+import { NewListComponent } from '../new-list/new-list.component';
 import { NewTaskComponent } from '../new-task/new-task.component';
 
 @Component({
@@ -79,6 +80,17 @@ export class TaskViewComponent implements OnInit {
           this.tasks?.push(response);
         }
       });
+  }
+
+  addNewList () {
+    // Open a modal to add a new list.
+    this.modalService.openModal(NewListComponent)
+      .afterClosed().subscribe((response: List) => {
+        // If we have a new list (response._id is present) then add it to our array.
+        if (response?._id) {
+          this.lists.push(response);
+        }
+      })
   }
 
 }
