@@ -5,6 +5,7 @@ import { Task } from 'src/app/models/task.model';
 import { ModalService } from 'src/app/shared/modal.service';
 import { TaskService } from 'src/app/task.service';
 import { EditListComponent } from '../edit-list/edit-list.component';
+import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { NewListComponent } from '../new-list/new-list.component';
 import { NewTaskComponent } from '../new-task/new-task.component';
 
@@ -16,7 +17,7 @@ import { NewTaskComponent } from '../new-task/new-task.component';
 export class TaskViewComponent implements OnInit {
 
   public lists: List[] = [];
-  public tasks: Task[] | undefined = [];
+  public tasks: Task[] = [];
 
   selectedListId = '';
 
@@ -35,7 +36,7 @@ export class TaskViewComponent implements OnInit {
           this.tasks = tasks;
         });
       } else {
-        this.tasks = undefined;
+        this.tasks = [];
       }
     });
 
@@ -52,7 +53,9 @@ export class TaskViewComponent implements OnInit {
     });
   }
 
-  onTaskDelete (task: Task) {
+  onTaskDelete (task: Task, event: MouseEvent) {
+    // Stop propagation of events. e.g. Stop the click-to-complete ability of the task row.
+    event.stopPropagation();
     // We want to delete the selected task.
     this.taskService.deleteTask(task).subscribe(() => {
       // Remove the task from the local array.
@@ -104,6 +107,23 @@ export class TaskViewComponent implements OnInit {
           // Check if title has been changed successfully.
           if (this.lists[indexToUpdate].title !== response.title) {
             this.lists[indexToUpdate] = response;
+          }
+        }
+      });
+  }
+
+  editTask (task: Task, event: MouseEvent) {
+    // Stop propagation of events. e.g. Stop the click-to-complete ability of the task row.
+    event.stopPropagation();
+    this.modalService.openModal(EditTaskComponent, { data: { task } })
+      .afterClosed().subscribe((response: Task) => {
+        // Ensure we've got a response first.
+        if (response) {
+          // Get the index of our task.
+          const indexToUpdate = this.tasks?.findIndex(task => task._id === response._id);
+          // Check if the title has been changed successfully.
+          if (this.tasks[indexToUpdate].title !== response.title) {
+            this.tasks[indexToUpdate] = response;
           }
         }
       });

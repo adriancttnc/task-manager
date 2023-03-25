@@ -48,12 +48,12 @@
             <p>{{ task.title }}</p>
           </div>
           <div class="task-buttons">
-            <button class="button is-danger" style="margin-right: 10px" (click)="onTaskDelete(task)">
+            <button class="button is-danger" style="margin-right: 10px" (click)="onTaskDelete(task, $event)">
               <div class="icon">
                 <i class="fas fa-trash"></i>
               </div>
             </button>
-            <button class="button" [routerLink]="['/lists', selectedListId, 'tasks', task._id, 'edit']">
+            <button class="button" (click)="editTask(task, $event)">
               <div class="icon"><i class="fas fa-pen"></i></div>
             </button>
           </div>

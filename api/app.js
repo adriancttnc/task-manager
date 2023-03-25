@@ -161,6 +161,7 @@ app.patch('/lists/:id', authenticate, (req, res) => {
   }, {
     $set: req.body
   }, {
+    // Tell mongoose to return the updated document.
     new: true
   })
   .then((listDoc) => {
@@ -282,9 +283,12 @@ app.patch('/lists/:listId/tasks/:taskId', authenticate, (req, res) => {
           _listId: req.params.listId
         }, {
           $set: req.body
+        }, {
+          // Tell mongoose to return the updated document.
+          new: true
         })
-          .then(() => {
-            res.send({ message: 'Updated Successfully' });
+          .then((taskDoc) => {
+            res.send(taskDoc);
           });
       } else {
         res.sendStatus(404);
