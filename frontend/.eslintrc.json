@@ -29,7 +29,8 @@
         "Urls",
         "frontend",
         "uri",
-        "signup"
+        "signup",
+        "keydown"
       ],
       "skipIfMatch": [
         "eslint-*"
