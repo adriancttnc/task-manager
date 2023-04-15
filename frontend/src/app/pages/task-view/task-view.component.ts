@@ -8,6 +8,7 @@ import { EditListComponent } from '../edit-list/edit-list.component';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
 import { NewListComponent } from '../new-list/new-list.component';
 import { NewTaskComponent } from '../new-task/new-task.component';
+import { AuthService } from 'src/app/auth.service';
 
 @Component({
   selector: 'app-task-view',
@@ -25,7 +26,8 @@ export class TaskViewComponent implements OnInit {
     private taskService: TaskService,
     private route: ActivatedRoute,
     private router: Router,
-    private modalService: ModalService
+    private modalService: ModalService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {

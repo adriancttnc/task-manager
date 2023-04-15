@@ -425,6 +425,27 @@ app.get('/users/me/access-token', verifySession, (req, res) => {
     })
 });
 
+app.post('/users/logout', authenticate, (req, res) => {
+  let refreshToken = req.header('x-refresh-token');
+  let userId = req.header('_id')
+  console.log('id', userId);
+  console.log('refreshToken', refreshToken);
+  User.findOneAndUpdate({
+    _id: userId,
+    'sessions.token': refreshToken
+  }, {
+    $pull: {
+      sessions: { token: refreshToken }
+    }
+  }).then((user) => {
+    if (user) {
+      console.log('User: ', user);
+      return res.send({status: 200, statusMessage: 'OK'});
+    }
+    res.sendStatus(404);
+  });
+})
+
 /************************************************************
  ***********************HELPER METHODS***********************
 ************************************************************/

@@ -28,6 +28,14 @@
   }
 }
 
+.logout-button {
+  width: 38px;
+  height: 38px;
+  position: absolute;
+  margin: 10px;
+}
+
+
 .task-list-container {
   position: relative;
   display: flex;
@@ -37,7 +45,6 @@
   padding: 42px;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
-
 }
 
 .list-menu {
