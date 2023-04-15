@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { shareReplay, tap } from 'rxjs';
@@ -33,26 +33,34 @@ export class AuthService {
       );
   }
   
-    signup (email: string, password: string) {
-      return this.webService.signup(email, password)
-        .pipe(
-          shareReplay(),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          tap((res: HttpResponse<any>) => {
-            // The auth tokens will be in the header of this response
-            this.setSession(
-              res.body._id,
-              res.headers.get('x-access-token') || '',
-              res.headers.get('x-refresh-token') || ''
-            );
-            this.router.navigateByUrl('/lists');
-          })
-        )
-    }
+  signup (email: string, password: string) {
+    return this.webService.signup(email, password)
+      .pipe(
+        shareReplay(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        tap((res: HttpResponse<any>) => {
+          // The auth tokens will be in the header of this response
+          this.setSession(
+            res.body._id,
+            res.headers.get('x-access-token') || '',
+            res.headers.get('x-refresh-token') || ''
+          );
+          this.router.navigateByUrl('/lists');
+        })
+      )
+  }
 
   logout () {
-    this.removeSession();
-    this.router.navigateByUrl('/login');
+    const headers = new HttpHeaders({
+      'x-refresh-token': this.getRefreshToken()!,
+      '_id': this.getUserId()!
+    });
+    return this.http.post(`${this.webService.ROOT_URL}/users/logout`, {}, { headers: headers })
+      .subscribe((res: any) => {
+        if (res.status ===  200) {
+          this.removeSession();
+        }
+      });
   }
 
   getAccessToken () {
@@ -64,10 +72,12 @@ export class AuthService {
   }
 
   getRefreshToken () {
+    console.log('authService.getRefreshToken: ', localStorage.getItem('x-refresh-token'));
     return localStorage.getItem('x-refresh-token');
   }
 
   getUserId () {
+    console.log('authService.getUserId: ', localStorage.getItem('user-id'));
     return localStorage.getItem('user-id');
   }
 
@@ -77,10 +87,11 @@ export class AuthService {
     localStorage.setItem('x-refresh-token', refreshToken);
   }
 
-  private removeSession () {
+  removeSession () {
     localStorage.removeItem('user-id');
     localStorage.removeItem('x-access-token');
     localStorage.removeItem('x-refresh-token');
+    this.router.navigateByUrl('/login');
   }
 
   getNewAccessToken () {

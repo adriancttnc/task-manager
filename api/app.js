@@ -93,9 +93,21 @@ let verifySession = (req, res, next) => {
           // The session is valid. Call next() to continue with processing this web request.
           next();
         } else {
-          // The session is not valid.
-          return Promise.reject({
-            'error': 'Refresh token has expired or the session is invalid.'
+          // The session is not valid. So let's remove it as we no longer need it.
+          User.findOneAndUpdate({
+            _id: user._id,
+            'sessions.token': refreshToken
+          }, {
+            $pull: {
+              sessions: { token: refreshToken }
+            }
+          }).then(() => {
+            // We don't really care about the result here. Return the same message whether the refreshToken exists and is expired or is invalid.
+            return Promise.reject({
+              'error': 'Refresh token has expired or the session is invalid.'
+            });
+          }).catch((err) => {
+            res.status(401).send(err);
           });
         }
       }
@@ -412,6 +424,27 @@ app.get('/users/me/access-token', verifySession, (req, res) => {
       res.status(400).send(err);
     })
 });
+
+app.post('/users/logout', authenticate, (req, res) => {
+  let refreshToken = req.header('x-refresh-token');
+  let userId = req.header('_id')
+  console.log('id', userId);
+  console.log('refreshToken', refreshToken);
+  User.findOneAndUpdate({
+    _id: userId,
+    'sessions.token': refreshToken
+  }, {
+    $pull: {
+      sessions: { token: refreshToken }
+    }
+  }).then((user) => {
+    if (user) {
+      console.log('User: ', user);
+      return res.send({status: 200, statusMessage: 'OK'});
+    }
+    res.sendStatus(404);
+  });
+})
 
 /************************************************************
  ***********************HELPER METHODS***********************

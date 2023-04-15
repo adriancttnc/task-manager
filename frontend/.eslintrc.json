@@ -30,7 +30,10 @@
         "frontend",
         "uri",
         "signup",
-        "keydown"
+        "keydown",
+        "hoverable",
+        "dropdowns",
+        "dropdown"
       ],
       "skipIfMatch": [
         "eslint-*"
