@@ -13,6 +13,6 @@ mongoose.connect(`mongodb://${config.mongoDB.URL}:${config.mongoDB.port}/${confi
     console.log(`Not Connected to the Database ERROR! ${err}`);
   });
 
-  module.exports = {
-    mongoose
-  };
+module.exports = {
+  mongoose
+};
