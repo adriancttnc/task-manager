@@ -1,10 +1,11 @@
 /* This file will handle connection logic to the MongoDB database. */
 
 const mongoose = require('mongoose');
+const config = require('../config');
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect('mongodb://127.0.0.1:27017/TaskManager', { useNewUrlParser: true })
+mongoose.connect(`mongodb://${config.mongoDB.URL}:${config.mongoDB.port}/${config.mongoDB.database}`, { useNewUrlParser: true })
   .then(() => {
     console.log('Connected to MongoDB successfully');
   })

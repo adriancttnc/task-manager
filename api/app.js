@@ -1,16 +1,62 @@
+/* eslint-disable no-unused-vars */
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express();
-// eslint-disable-next-line no-unused-vars
 const { mongoose } = require('./db/mongoose');
 const port = 3000;
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const config = require('./config');
+const configSample = require('./config-sample');
+const _ = require('underscore');
 
 // Load in the mongoose Models
 const { List, Task, User} =  require('./db/models');
 
-const jwt = require('jsonwebtoken');
+
+/************************************************************
+ **********************CONFIG CHECK**************************
+************************************************************/
+
+const checkConfigFilesMatch = (configObj, configSampleObj) => {
+  // Function that takes in an object and returns an array with its keys.
+  const getConfigKeys = (inputObj) => {
+    // Declare the stack that holds our object.
+    const stack = [inputObj];
+    // Declare the arrays that will hold our keys.
+    const objKeys = [];
+    while (stack?.length > 0) {
+    // Store the last element from the array in currentItem and remove it from the stack.
+    const currentItem = stack.pop();
+    // For each key in the currentItem do.
+    _.each(currentItem, (value, key) => {
+      // If the current key holds an object, add it to the stack.
+      if (typeof currentItem[key] === 'object') {
+        stack.push(currentItem[key]);
+      }
+      // Add the key to the array.
+      objKeys.push(key);
+    });
+    }
+    // Return the array with the keys of the provided object.
+    return objKeys;
+  }
+
+  // Declare two arrays that will hold our keys.
+  const configKeys = getConfigKeys(configObj);
+  const configSampleKeys = getConfigKeys(configSampleObj);
+
+  // Now compare the two arrays.
+  if (!_.isEqual(configKeys, configSampleKeys)) {
+    console.log('================================================================================================');
+    console.log('================================================================================================');
+    throw new Error('Config files do not match!');
+  }
+}
+
+checkConfigFilesMatch(config, configSample);
+
 
 
 /************************************************************
