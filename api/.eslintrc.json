@@ -19,6 +19,11 @@
         "jsonwebtoken",
         "bcryptjs",
         "mongodb",
+        "smtp",
+        "ssl",
+        "srv",
+        "nodemailer",
+        "typeof",
         "cors"
       ],
       "skipIfMatch": [
