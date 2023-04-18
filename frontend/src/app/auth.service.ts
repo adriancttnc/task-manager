@@ -64,33 +64,33 @@ export class AuthService {
   }
 
   getAccessToken () {
-    return localStorage.getItem('x-access-token');
+    return sessionStorage.getItem('x-access-token');
   }
 
   setAccessToken (accessToken: string | null) {
-    localStorage.setItem('x-access-token', accessToken!);
+    sessionStorage.setItem('x-access-token', accessToken!);
   }
 
   getRefreshToken () {
-    console.log('authService.getRefreshToken: ', localStorage.getItem('x-refresh-token'));
-    return localStorage.getItem('x-refresh-token');
+    console.log('authService.getRefreshToken: ', sessionStorage.getItem('x-refresh-token'));
+    return sessionStorage.getItem('x-refresh-token');
   }
 
   getUserId () {
-    console.log('authService.getUserId: ', localStorage.getItem('user-id'));
-    return localStorage.getItem('user-id');
+    console.log('authService.getUserId: ', sessionStorage.getItem('user-id'));
+    return sessionStorage.getItem('user-id');
   }
 
   private setSession (userId: string, accessToken: string, refreshToken: string) {
-    localStorage.setItem('user-id', userId);
-    localStorage.setItem('x-access-token', accessToken);
-    localStorage.setItem('x-refresh-token', refreshToken);
+    sessionStorage.setItem('user-id', userId);
+    sessionStorage.setItem('x-access-token', accessToken);
+    sessionStorage.setItem('x-refresh-token', refreshToken);
   }
 
   removeSession () {
-    localStorage.removeItem('user-id');
-    localStorage.removeItem('x-access-token');
-    localStorage.removeItem('x-refresh-token');
+    sessionStorage.removeItem('user-id');
+    sessionStorage.removeItem('x-access-token');
+    sessionStorage.removeItem('x-refresh-token');
     this.router.navigateByUrl('/login');
   }
 
