@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const config = require('../config');
 
-mongoose.Promise = global.Promise;
+mongoose.set('strictQuery', true);
 
 mongoose.connect(`mongodb://${config.mongoDB.URL}:${config.mongoDB.port}/${config.mongoDB.database}`, { useNewUrlParser: true })
   .then(() => {
