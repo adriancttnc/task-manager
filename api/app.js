@@ -10,9 +10,11 @@ const jwt = require('jsonwebtoken');
 const config = require('./config');
 const configSample = require('./config-sample');
 const _ = require('underscore');
+const crypto = require('crypto');
+const emailService = require('./srvControllers/shared/emailService');
 
 // Load in the mongoose Models
-const { List, Task, User} =  require('./db/models');
+const { List, Task, User, UserPasswordEvent} =  require('./db/models');
 
 
 /************************************************************
@@ -85,6 +87,8 @@ app.use(function (req, res, next) {
     res.header('Access-Control-Expose-Headers', 'x-access-token, x-refresh-token, _id');
   next();
 });
+
+app.use(require('./srvControllers'));
 
 // Check whether the request has a valid JWT token.
 let authenticate = (req, res, next) => {
@@ -457,7 +461,8 @@ app.post('/users/login', (req, res) => {
     });
 });
 
-/** GET /users/me/access-token
+/**
+ * GET /users/me/access-token
  * Purpose: Generates and returns an access token
  */
 app.get('/users/me/access-token', verifySession, (req, res) => {
