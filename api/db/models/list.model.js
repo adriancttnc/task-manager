@@ -9,7 +9,6 @@ const ListSchema = new mongoose.Schema({
   },
   // With auth.
   _userId: {
-
     type: mongoose.Types.ObjectId,
     required: true
   }
