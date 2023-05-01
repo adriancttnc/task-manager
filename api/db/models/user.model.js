@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 // JWT Secret
 // eslint-disable-next-line spellcheck/spell-checker
 const jwtSecret = "51778657246321226641fsdklafjasdkljfsklfjd7148924065";
+const config = require('../../config');
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -18,7 +19,7 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8
+    minlength: config.registration.minPasswordLength
   },
   sessions: [{
     token: {
@@ -48,20 +49,24 @@ UserSchema.methods.generateAccessAuthToken = function () {
   const user = this;
   return new Promise((resolve, reject) => {
     // Create the JSON Web Token and return that.
-    jwt.sign({ _id: user._id.toHexString() }, jwtSecret, { expiresIn: '15m' }, (err, token) => {
-      if (!err) {
-        // If there isn't an error.
-        resolve(token);
-      } else {
-        // There is an error.
-        reject();
-      }
+    jwt.sign(
+      { _id: user._id.toHexString() },
+      jwtSecret,
+      { expiresIn: `${config.registration.accessTokenLifespan}m` },
+      (err, token) => {
+        if (!err) {
+          // If there isn't an error.
+          resolve(token);
+        } else {
+          // There is an error.
+          reject();
+        }
     });
   });
 };
 
 UserSchema.methods.generateRefreshAuthToken = function () {
-  // This method simply generates a 64byte hex string. I doesn't save it to the database. saveSessionToDatabase() does that.
+  // This method simply generates a 64byte hex string. It doesn't save it to the database. saveSessionToDatabase() does that.
   return new Promise((resolve, reject) => {
     crypto.randomBytes(64, (err, buffer) => {
       if (!err) {
@@ -147,7 +152,7 @@ UserSchema.statics.hasRefreshTokenExpired = (expiresAt) => {
 // Before a user document is saved, this code runs.
 UserSchema.pre('save', function (next) {
   let user = this;
-  let costFactor = 10;
+  let costFactor = config.registration.bcryptCostFactor;
 
   if (user.isModified('password')) {
     // If the password field has been edited/changed then run this code.
@@ -185,7 +190,7 @@ let saveSessionToDatabase = (user, refreshToken) => {
 };
 
 let generateRefreshTokenExpiryTime = () => {
-  let daysUntilExpiry = "10";
+  let daysUntilExpiry = config.registration.refreshTokenLifespan;
   let secondsUntilExpiry = ((daysUntilExpiry * 24) * 60) * 60;
   return ((Date.now() / 1000) + secondsUntilExpiry);
 };
