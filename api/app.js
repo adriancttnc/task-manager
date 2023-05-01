@@ -531,3 +531,8 @@ app.listen(3000, () => {
 // ToDo - Add ability to logout of all sessions.
 // ToDo - Add ability to see all current sessions with some details (device, location, time, remaining lifespan).
 // ToDo - Ensure that the accessToken provided matches the sessionId it belongs to. We don't want any valid accessToken to validate any valid session for a given user.
+// ToDo - Add ability to use oAuth2 for email sending.
+// ToDo - Implement error logging.
+// ToDo - Improve the existing items that are using an expiry date. (see how UserPasswordEvent does it).
+// ToDo - What happens if a refreshToken expires when user is using the app?
+// ToDo - Move each item into it's own more appropriate controller and keep a clean app.js.
