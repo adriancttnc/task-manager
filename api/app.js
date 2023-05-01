@@ -525,3 +525,4 @@ app.listen(3000, () => {
 // ToDo - Ensure action completion is confirmed visually to the user.
 // ToDo - Add ability to logout of all sessions.
 // ToDo - Add ability to see all current sessions with some details (device, location, time, remaining lifespan).
+// ToDo - Ensure that the accessToken provided matches the sessionId it belongs to. We don't want any valid accessToken to validate any valid session for a given user.
