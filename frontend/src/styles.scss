@@ -3,5 +3,18 @@
 @import 'main-styles';
 @import '../node_modules/bulma/bulma.sass';
 @import "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css";
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+// Set custom global styles (will be applied to whole app)
+html {
+  background: linear-gradient(to right top, $turquoise, $green);
+  overflow-y: auto;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
