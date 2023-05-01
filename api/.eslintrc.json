@@ -24,6 +24,10 @@
         "srv",
         "nodemailer",
         "typeof",
+        "enums",
+        "enum",
+        "fs",
+        "utf",
         "cors"
       ],
       "skipIfMatch": [
