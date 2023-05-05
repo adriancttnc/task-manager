@@ -50,3 +50,13 @@ $input-shadow: none;
   background: white;
   border-radius: 8px;
 }
+
+.mat-mdc-snack-bar-container {
+  width: 22rem;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+
+  &.snackbar-success { --mdc-snackbar-container-color:#339900; }
+  &.snackbar-info { --mdc-snackbar-container-color:#3778bb; }
+  &.snackbar-error { --mdc-snackbar-container-color:#cc3300; }
+  &.snackbar-warning { --mdc-snackbar-container-color:#e18001; }
+}
