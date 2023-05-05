@@ -28,8 +28,6 @@ let transporter  = nodemailer.createTransport({
   },
 });
 
-console.log('path.resolve(): ', path.resolve());
-
 // Verify connection configuration
 transporter.verify(function (error, success) {
   if (error) {
@@ -58,6 +56,8 @@ async function send(emailObj) {
     subject: emailObj.subject,
     text: emailObj.textBody,
     html: htmlToSend
+  }).catch((err) => {
+    console.error(err);
   });
   console.log('Message sent! ', email);
   return email.messageId;
