@@ -27,7 +27,7 @@ router.post('', (req, res) => {
         // Generate the forgot password key.
         const key = crypto.randomBytes(32).toString('hex');
         // Build the URL for the user.
-        const userURL = util.getUrl(req) + '/forgotPassword/' + key;
+        const userURL = util.getUrl(req) + '/forgotPassword?key=' + key;
         // Get the lifespan of the key.
         const keyLifespan = getForgotPasswordKeyLifespan();
         // Build the password event object.
@@ -54,7 +54,7 @@ router.post('', (req, res) => {
         emailService.send(emailObj);
       }
       // Regardless of the result above, we want to send a 200 OK out as we don't want to give away the presence of an email in the db.
-      return res.sendStatus(200);
+      return res.send({status: 200, statusMessage: 'OK'});
     })
     .catch((err) => {
       console.log(err);
@@ -62,17 +62,17 @@ router.post('', (req, res) => {
 });
 
 /**
- * GET /forgotPassword/:key
+ * POST /forgotPassword/:key
  * Purpose: Validate the key and reset a user's password.
  */
-router.get('/:key', (req, res) => {
+router.post('/:key', (req, res) => {
   const key = req.params.key;
   UserPasswordEvent.findOne({
     key: key
   }).then((passwordEvent) => {
     // If no key has been found, return back a message.
     if (!passwordEvent) {
-      return res.send('Forgot Password Key nonexistent or expired.');
+      return Promise.reject({ error: 'Forgot Password key invalid or expired.' })
     }
     // Check if the two passwords match.
     const password = req.body.password;
@@ -103,23 +103,24 @@ router.get('/:key', (req, res) => {
                 throw new Error('Forgot Password - user.save() - No savedUser!');
               }
             }).catch((err) => {
-              console.log(err);
+              console.error(err);
             });
           // Return 200 OK.
-          return res.sendStatus(200);
+          return res.send({status: 200, statusMessage: 'OK'});
         // User not found.
         } else {
-          return res.send('User not found!');
+          return Promise.reject({ error: 'User not found!' })
         }
       }).catch((err) => {
         console.log(err);
       })
-    // Passwords do not match, return.
+      // Passwords do not match, return.
     } else {
-      return res.send('Passwords do not match!');
+      return Promise.reject({ error: 'Passwords do not match!' })
     }
   }).catch((err) => {
     console.log('Issue verifying the validity of the forgot password key\n', err);
+    return res.send(err);
   });
 })
 
