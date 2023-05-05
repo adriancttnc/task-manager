@@ -15,6 +15,9 @@ import { SignupPageComponent } from './pages/signup-page/signup-page.component';
 import { EditListComponent } from './pages/edit-list/edit-list.component';
 import { EditTaskComponent } from './pages/edit-task/edit-task.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { SnackbarComponent } from './shared/components/snackbar/snackbar.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -24,7 +27,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     LoginComponent,
     SignupPageComponent,
     EditListComponent,
-    EditTaskComponent
+    EditTaskComponent,
+    ForgotPasswordComponent,
+    SnackbarComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +37,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     BrowserAnimationsModule,
     HttpClientModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: WebReqInterceptor, multi: true }
