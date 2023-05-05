@@ -521,16 +521,20 @@ app.listen(3000, () => {
 ************************************************************/
 // ToDo - Ensure you can handle illegal Ids.
 // ToDo - Prevent failed calls to the backend. (You get a failed call whenever the access token expires and needs to be renewed)
-// Change all new/edit pages to pop-up modals.https://github.com/adriancttnc/task-manager/pull/1
+// Change all new/edit pages to pop-up modals. https://github.com/adriancttnc/task-manager/pull/1
 // ToDo - Implement a form component and use it throughout the app.
 // ToDo - Add unitTesting.
 // ToDo - Add separate webRequest functions for lists and tasks.
 // ToDo - Ensure there is nothing of type 'any'.
-// Implement Logout.https://github.com/adriancttnc/task-manager/pull/2
+// Implement Logout. https://github.com/adriancttnc/task-manager/pull/2
 // ToDo - Ensure action completion is confirmed visually to the user.
 // ToDo - Add ability to logout of all sessions.
 // ToDo - Add ability to see all current sessions with some details (device, location, time, remaining lifespan).
 // ToDo - Ensure that the accessToken provided matches the sessionId it belongs to. We don't want any valid accessToken to validate any valid session for a given user.
+// Implement an emailing method. https://github.com/adriancttnc/task-manager/pull/3
+// Implement forgot password. https://github.com/adriancttnc/task-manager/pull/3
+// Implement a notification mechanism. https://github.com/adriancttnc/task-manager/pull/3
+// Implement an external config system. https://github.com/adriancttnc/task-manager/pull/3
 // ToDo - Add ability to use oAuth2 for email sending.
 // ToDo - Implement error logging.
 // ToDo - Improve the existing items that are using an expiry date. (see how UserPasswordEvent does it).
