@@ -1,0 +1,26 @@
+div.container {
+  display: flex;
+  flex-direction: row;
+
+  div.message-container {
+    flex-grow: 1;
+
+    div.title {
+      font-size: 1.2em;
+      font-weight: 500;
+      color: #ffffff;
+    }
+
+    div.message {
+      font-size: 1rem;
+      font-weight: 100;
+      background-color: var(--mdc-snackbar-container-color);
+    }
+  }
+
+  div.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

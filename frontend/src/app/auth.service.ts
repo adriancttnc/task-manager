@@ -2,9 +2,9 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { shareReplay, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { WebRequestService } from './web-request.service';
-
+import { SnackbarService } from './shared/services/snackbar.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,13 +13,13 @@ export class AuthService {
   constructor(
     private webService: WebRequestService,
     private router: Router,
-    private http: HttpClient
-  ) { }
+    private http: HttpClient,
+    private _snackBarService: SnackbarService
+  ) {}
 
   login (email: string, password: string) {
     return this.webService.login(email, password)
       .pipe(
-        shareReplay(),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         tap((res: HttpResponse<any>) => {
           // The auth tokens will be in the header of this response
@@ -36,7 +36,6 @@ export class AuthService {
   signup (email: string, password: string) {
     return this.webService.signup(email, password)
       .pipe(
-        shareReplay(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
         tap((res: HttpResponse<any>) => {
           // The auth tokens will be in the header of this response
@@ -61,6 +60,38 @@ export class AuthService {
           this.removeSession();
         }
       });
+  }
+
+  forgotPassword (email: string) {
+    return this.webService.forgotPassword(email)
+      .subscribe((res: any) => {
+        console.log('forgotPassword res:', res);
+        if (res.status ===  200) {
+          // Show notification here.
+          this.router.navigateByUrl('/login');
+          this._snackBarService.success({
+            title: 'Success',
+            message: 'If we can find your email you will receive a link to reset your password.',
+            duration: 20000
+          });
+        }
+        return res;
+      });
+  }
+
+  resetPassword (key: string, password: string, confirmPassword: string) {
+    return this.webService.resetPassword(key, password, confirmPassword)
+      .subscribe((res: any) => {
+        if (res.status === 200) {
+          this.router.navigateByUrl('/login');
+          this._snackBarService.success({
+            title: 'Success',
+            message: 'Password has been changed successfully',
+            duration: 20000
+          });
+        }
+        return res;
+      })
   }
 
   getAccessToken () {

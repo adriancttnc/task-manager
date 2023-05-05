@@ -1,16 +1,64 @@
+/* eslint-disable no-unused-vars */
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express();
-// eslint-disable-next-line no-unused-vars
 const { mongoose } = require('./db/mongoose');
 const port = 3000;
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const config = require('./config');
+const configSample = require('./config-sample');
+const _ = require('underscore');
+const crypto = require('crypto');
+const emailService = require('./srvControllers/shared/emailService');
 
 // Load in the mongoose Models
-const { List, Task, User} =  require('./db/models');
+const { List, Task, User, UserPasswordEvent} =  require('./db/models');
 
-const jwt = require('jsonwebtoken');
+
+/************************************************************
+ **********************CONFIG CHECK**************************
+************************************************************/
+
+const checkConfigFilesMatch = (configObj, configSampleObj) => {
+  // Function that takes in an object and returns an array with its keys.
+  const getConfigKeys = (inputObj) => {
+    // Declare the stack that holds our object.
+    const stack = [inputObj];
+    // Declare the arrays that will hold our keys.
+    const objKeys = [];
+    while (stack?.length > 0) {
+    // Store the last element from the array in currentItem and remove it from the stack.
+    const currentItem = stack.pop();
+    // For each key in the currentItem do.
+    _.each(currentItem, (value, key) => {
+      // If the current key holds an object, add it to the stack.
+      if (typeof currentItem[key] === 'object') {
+        stack.push(currentItem[key]);
+      }
+      // Add the key to the array.
+      objKeys.push(key);
+    });
+    }
+    // Return the array with the keys of the provided object.
+    return objKeys;
+  }
+
+  // Declare two arrays that will hold our keys.
+  const configKeys = getConfigKeys(configObj);
+  const configSampleKeys = getConfigKeys(configSampleObj);
+
+  // Now compare the two arrays.
+  if (!_.isEqual(configKeys, configSampleKeys)) {
+    console.log('================================================================================================');
+    console.log('================================================================================================');
+    throw new Error('Config files do not match!');
+  }
+}
+
+checkConfigFilesMatch(config, configSample);
+
 
 
 /************************************************************
@@ -39,6 +87,8 @@ app.use(function (req, res, next) {
     res.header('Access-Control-Expose-Headers', 'x-access-token, x-refresh-token, _id');
   next();
 });
+
+app.use(require('./srvControllers'));
 
 // Check whether the request has a valid JWT token.
 let authenticate = (req, res, next) => {
@@ -411,7 +461,8 @@ app.post('/users/login', (req, res) => {
     });
 });
 
-/** GET /users/me/access-token
+/**
+ * GET /users/me/access-token
  * Purpose: Generates and returns an access token
  */
 app.get('/users/me/access-token', verifySession, (req, res) => {
@@ -466,16 +517,26 @@ app.listen(3000, () => {
 
 
 /************************************************************
- ****************************ToDOs***************************
+ ****************************ToDo****************************
 ************************************************************/
 // ToDo - Ensure you can handle illegal Ids.
 // ToDo - Prevent failed calls to the backend. (You get a failed call whenever the access token expires and needs to be renewed)
-// Change all new/edit pages to pop-up modals.https://github.com/adriancttnc/task-manager/pull/1
+// Change all new/edit pages to pop-up modals. https://github.com/adriancttnc/task-manager/pull/1
 // ToDo - Implement a form component and use it throughout the app.
 // ToDo - Add unitTesting.
 // ToDo - Add separate webRequest functions for lists and tasks.
 // ToDo - Ensure there is nothing of type 'any'.
-// Implement Logout.https://github.com/adriancttnc/task-manager/pull/2
+// Implement Logout. https://github.com/adriancttnc/task-manager/pull/2
 // ToDo - Ensure action completion is confirmed visually to the user.
 // ToDo - Add ability to logout of all sessions.
 // ToDo - Add ability to see all current sessions with some details (device, location, time, remaining lifespan).
+// ToDo - Ensure that the accessToken provided matches the sessionId it belongs to. We don't want any valid accessToken to validate any valid session for a given user.
+// Implement an emailing method. https://github.com/adriancttnc/task-manager/pull/3
+// Implement forgot password. https://github.com/adriancttnc/task-manager/pull/3
+// Implement a notification mechanism. https://github.com/adriancttnc/task-manager/pull/3
+// Implement an external config system. https://github.com/adriancttnc/task-manager/pull/3
+// ToDo - Add ability to use oAuth2 for email sending.
+// ToDo - Implement error logging.
+// ToDo - Improve the existing items that are using an expiry date. (see how UserPasswordEvent does it).
+// ToDo - What happens if a refreshToken expires when user is using the app?
+// ToDo - Move each item into it's own more appropriate controller and keep a clean app.js.

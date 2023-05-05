@@ -1,0 +1,12 @@
+<div class="container">
+  <div class="message-container">
+    <div class="title" *ngIf="data.title">{{ data.title }}</div>
+    <div class="message" *ngIf="data.message">{{ data.message }}</div>
+  </div>
+  
+  <div class="icon">
+    <button class="button is-ghost" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>

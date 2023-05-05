@@ -33,7 +33,8 @@
         "keydown",
         "hoverable",
         "dropdowns",
-        "dropdown"
+        "dropdown",
+        "snackbar"
       ],
       "skipIfMatch": [
         "eslint-*"
