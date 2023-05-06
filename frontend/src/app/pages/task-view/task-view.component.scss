@@ -4,22 +4,22 @@
   display: flex;
   width: 100%;
   height: 100%;
-  max-width: 1000px;
-  max-height: 680px;
+  max-width: 64rem;
+  max-height: 45rem;
 }
 
 .sidebar {
   display: flex;
   flex-direction: column;
 
-  width: 250px;
+  width: 16rem;
   background-color: white;
-  padding: 42px;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
+  padding: 2.6rem;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
 
   .top-bar {
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
     display: flex;
     .title {
       flex-grow: 1;
@@ -29,10 +29,10 @@
 }
 
 .logout-button {
-  width: 38px;
-  height: 38px;
+  width: 2.5rem;
+  height: 2.5rem;
   position: absolute;
-  margin: 10px;
+  margin: 1rem;
 }
 
 
@@ -42,25 +42,25 @@
   flex-grow: 1;
   flex-direction: column;
 
-  padding: 42px;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
+  padding: 2.6rem;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 }
 
 .list-menu {
   display: flex;
   flex-direction: column;
-  margin-top: 15px;
+  margin-top: 1rem;
   flex-grow: 1;
 
   .list-menu-item {
     display: flex;
     align-items: center;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 0.3rem 1rem;
+    border-radius: 0.5rem;
     width: 100%;
     color: #5f5f5f;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
     
     &:hover {
       background-color: $light;
@@ -77,8 +77,8 @@
 .task {
   display: flex;
   background: white;
-  border-radius: 5px;
-  margin-top: 10px;
+  border-radius: 0.5rem;
+  margin-top: 0.6rem;
   align-items: center;
 
   cursor: pointer;
@@ -89,7 +89,7 @@
   }
   
   &:hover {
-    box-shadow: 0 0 0 5px #eeeeee;
+    box-shadow: 0 0 0 0.3rem #eeeeee;
 
     .task-buttons {
       transition: opacity 0.2s ease-in-out, transform 0.3s;
@@ -99,13 +99,13 @@
   }
 
   &:not(.completed) {
-    padding: 5px 20px;
+    padding: 0.3rem 1.25rem;
   }
 
   &.completed .task-text {
     text-decoration: line-through;
     opacity: 0.6;
-    padding: 0 20px;
+    padding: 0 1.25rem;
   }
 
   .task-text {
@@ -119,13 +119,13 @@
 }
 
 .circle-add-button {
-  height: 60px;
-  width: 60px;
+  height: 4rem;
+  width: 4rem;
   position: absolute;
   background: $primary;
   border-radius: 50%;
-  bottom: 35px;
-  right: 25px;
+  bottom: 2rem;
+  right: 1.6rem;
 
   .circle-add-button-icon {
     transform: scale(2);
@@ -133,7 +133,7 @@
 }
 
 .empty-state-text {
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #888;
   text-align: center;
 }
