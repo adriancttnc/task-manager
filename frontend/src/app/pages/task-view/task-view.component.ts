@@ -65,15 +65,21 @@ export class TaskViewComponent implements OnInit {
     });
   }
 
-  onDeleteList () {
+  onDeleteList (listId: string, event: MouseEvent) {
+    // Stop propagation of events. e.g. Prevent selecting the list you want to delete.
+    event.stopPropagation();
     // We want to delete the selected list.
-    this.taskService.deleteList(this.selectedListId).subscribe(() => {
+    this.lists = this.lists.filter(list => list._id !== listId);
+
+    this.taskService.deleteList(listId).subscribe(() => {
       // Remove the list from the local array.
-      this.lists = this.lists.filter(list => list._id !== this.selectedListId);
-      // Blank selectedListId.
-      this.selectedListId = '';
-      // Remove the listId from the URL.
-      this.router.navigate([''], { queryParams: {} });
+      this.lists = this.lists.filter(list => list._id !== listId);
+      // Blank selectedListId if we deleted the selected list.
+      if (this.selectedListId === listId) {
+        this.selectedListId = '';
+        // Remove the listId from the URL.
+        this.router.navigate([''], { queryParams: {} });
+      }
     });
   }
 
@@ -99,7 +105,9 @@ export class TaskViewComponent implements OnInit {
       })
   }
 
-  editList (listId: string) {
+  editList (listId: string, event: MouseEvent) {
+    // Stop propagation of events. e.g. Prevent selecting the list you want to edit.
+    event.stopPropagation();
     this.modalService.openModal(EditListComponent, { data: { _listId: listId } })
       .afterClosed().subscribe((response: List) => {
         // Ensure we've got a response first.
