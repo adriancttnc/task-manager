@@ -9,23 +9,17 @@
           <div class="dropdown-trigger">
             <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
               <span class="icon is-small">
-                <i class="fas fa-cog" aria-hidden="true"></i>
+                <i class="fas fa-user" aria-hidden="true"></i>
               </span>
             </button>
           </div>
           <div class="dropdown-menu" id="dropdown-menu3" role="menu">
             <div class="dropdown-content">
               <a class="dropdown-item">Settings</a>
-              <a class="dropdown-item has-text-danger">Sign Out</a>
+              <a class="dropdown-item has-text-danger" (click)="this.authService.logout()">Sign Out</a>
             </div>
           </div>
         </div>
-
-        <button class="button logout-button" (click)="this.authService.logout()">
-          <span class="icon">
-            <mat-icon>logout</mat-icon>
-          </span>
-        </button>
 
       </div>
 
