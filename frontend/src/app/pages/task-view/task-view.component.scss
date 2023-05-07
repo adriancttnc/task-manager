@@ -12,29 +12,78 @@
   display: flex;
   flex-direction: column;
 
-  width: 16rem;
+  min-width: 16rem;
+  max-width: 16rem;
   background-color: white;
-  padding: 2.6rem;
+  padding: 1rem 1.5rem 2.6rem 1.5rem;
   border-top-left-radius: 0.5rem;
   border-bottom-left-radius: 0.5rem;
 
   .top-bar {
-    margin-bottom: 1rem;
+    padding-bottom: 1rem;
     display: flex;
+    justify-content: space-between;
+
     .title {
       flex-grow: 1;
       margin: 0;
     }
   }
-}
 
-.logout-button {
-  width: 2.5rem;
-  height: 2.5rem;
-  position: absolute;
-  margin: 1rem;
-}
+  .list-title {
+    padding: 1rem 1.5rem 0 1.5rem;
+  }
 
+  .list-menu {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .list-menu-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      border-radius: 0.5rem;
+
+      &.is-active {
+        color: $dark-green;
+        font-weight: bold;
+      }
+
+      .list{
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        padding-left: 0.3rem;
+        max-width: 9rem;
+        color: #5f5f5f;
+        overflow-x: hidden;
+      }
+
+      &:hover {
+        background-color: $light;
+
+        .list-buttons {
+          transition: opacity 0.2s ease-in-out, transform 0.3s;
+          transform: scale(.6);
+          opacity: 1;
+        }
+      }
+
+      &:active {
+        transform: scale(.95);
+      }
+
+      .list-buttons {
+        transition: opacity 0.2s ease-in-out, transform 0.3s;
+        display: inline-flex;
+        max-width: 1rem;
+        opacity: 0;
+        transform: scale(.5);
+      }
+    }
+  }
+}
 
 .task-list-container {
   position: relative;
@@ -47,32 +96,6 @@
   border-bottom-right-radius: 0.5rem;
 }
 
-.list-menu {
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
-  flex-grow: 1;
-
-  .list-menu-item {
-    display: flex;
-    align-items: center;
-    padding: 0.3rem 1rem;
-    border-radius: 0.5rem;
-    width: 100%;
-    color: #5f5f5f;
-    margin-bottom: 0.5rem;
-    
-    &:hover {
-      background-color: $light;
-    }
-
-    &.is-active {
-      background-color: #cff8ef;
-      color: $dark-green;
-    }
-  }
-
-}
 
 .task {
   display: flex;
@@ -87,13 +110,13 @@
   &:active {
     transform: scale(.95);
   }
-  
+
   &:hover {
     box-shadow: 0 0 0 0.3rem #eeeeee;
 
     .task-buttons {
       transition: opacity 0.2s ease-in-out, transform 0.3s;
-      transform: scale(.8);
+      transform: scale(.7);
       opacity: 1;
     }
   }
@@ -106,15 +129,24 @@
     text-decoration: line-through;
     opacity: 0.6;
     padding: 0 1.25rem;
+
+    .task-buttons {
+      padding: 0.3rem 1.25rem;
+    }
   }
 
   .task-text {
     flex-grow: 1;
+    max-width: 37rem;
   }
 
   .task-buttons {
+    display: inline-flex;
+    transition: opacity 0.2s ease-in-out, transform 0.3s;
+    right: 3rem;
     opacity: 0;
     transform: scale(.5);
+    max-width: 1rem;
   }
 }
 
