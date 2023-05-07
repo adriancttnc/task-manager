@@ -29,8 +29,8 @@
       <!-- List Elements -->
       <div class="list-menu">
         <div *ngIf="lists">
-          <div class="list-menu-item" *ngFor="let list of lists" routerLinkActive="is-active">
-            <a class="list" [routerLink]="['/lists', list._id]" >
+          <div class="list-menu-item" *ngFor="let list of lists" routerLinkActive="is-active" [routerLink]="['/lists', list._id]">
+            <a class="list">
               <div class="list-text">
                 <p>{{ list.title }}</p>
               </div>
