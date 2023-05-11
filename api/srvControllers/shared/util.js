@@ -12,7 +12,7 @@ const getUrl = (req) => {
  * Add value from a passed-in string to the current time.
  * The string must be of format `'15s', '5m', '1.5h', '2d'`.
  * @param { string }amount
- * @returns current time plus the value in amount.
+ * @returns Current time plus the value in amount as milliseconds.
  */
 const addToNow = (amount) => {
   // Get the time amount based on the letter in the string.

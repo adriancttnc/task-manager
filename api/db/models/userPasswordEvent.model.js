@@ -16,9 +16,9 @@ const UserPasswordEventSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  // Automatically delete the document when the amount of time passed into expires passes(+ max 60s).
   expiresAt: {
     type: Date,
-    // Automatically delete the document when the amount of time passed into expires passes(+ max 60s).
     expires: config.registration.forgotPasswordKeyLifespan,
     default: () => util.addToNow(config.registration.forgotPasswordKeyLifespan)
   }

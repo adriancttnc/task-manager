@@ -12,9 +12,10 @@ const configSample = require('./config-sample');
 const _ = require('underscore');
 const crypto = require('crypto');
 const emailService = require('./srvControllers/shared/emailService');
+const { ERROR_CODES, ERROR_MESSAGES, STATUS_CODES, STATUS_MESSAGES } = require('./srvControllers/shared/enums');
 
 // Load in the mongoose Models
-const { List, Task, User, UserPasswordEvent} =  require('./db/models');
+const { List, Task, User, Session } =  require('./db/models');
 
 
 /************************************************************
@@ -69,7 +70,7 @@ checkConfigFilesMatch(config, configSample);
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 const corsOptions ={
-  origin:'http://localhost:4200', 
+  origin:'http://localhost:4200',
   credentials:true,            //access-control-allow-credentials:true
   optionSuccessStatus:200
 }
@@ -115,56 +116,63 @@ let verifySession = (req, res, next) => {
   // Grab the _id from the request header.
   let _id = req.header('_id');
 
-  User.findByIdAndToken(_id, refreshToken)
-    .then((user) => {
+  // Verify the session.
+  User.aggregate([
+    // Filter the Users collection by the _id to match our passed-in _id.
+    { 
+      $match: { _id: mongoose.Types.ObjectId(_id) }
+    },
+    // Join to Sessions collection on Users._id = Sessions._userId and check if the refreshToken matches with the one in the db.
+    {
+      $lookup: {
+        from: 'sessions',
+        localField: '_id',
+        foreignField: '_userId',
+        pipeline: [{
+          $match: { token: refreshToken }
+        }],
+        as: 'userSession'
+      }
+    }
+  ]).then(
+    // As the aggregate method ALWAYS returns an array of values, we can destructure the result. Destructuring only available in ES6. This is equivalent to user = user[0].
+    ([user]) => {
+
+      // User couldn't be found.
       if (!user) {
-        // User couldn't be found.
         return Promise.reject({
-          'error': 'User not found. Make sure that the refresh token and user id are correct.'
-        })
-      } else {
-        // The user was found, therefore the refreshToken exists in the database but we still have to check if it has expired.
-        req.user_id = user._id;
-        req.userObject = user;
-        req.refreshToken = refreshToken;
-
-        let isSessionValid = false;
-
-        user.sessions.forEach((session) => {
-          if (session.token === refreshToken) {
-            if (User.hasRefreshTokenExpired(session.expiresAt) === false) {
-              // Refresh token has not expired.
-              isSessionValid = true;
-            }
-          }
+          error: ERROR_MESSAGES.USER_NOT_FOUND,
+          errorCode: ERROR_CODES.USER_NOT_FOUND
         });
-
-        if (isSessionValid) {
-          // The session is valid. Call next() to continue with processing this web request.
-          next();
-        } else {
-          // The session is not valid. So let's remove it as we no longer need it.
-          User.findOneAndUpdate({
-            _id: user._id,
-            'sessions.token': refreshToken
-          }, {
-            $pull: {
-              sessions: { token: refreshToken }
-            }
-          }).then(() => {
-            // We don't really care about the result here. Return the same message whether the refreshToken exists and is expired or is invalid.
-            return Promise.reject({
-              'error': 'Refresh token has expired or the session is invalid.'
-            });
-          }).catch((err) => {
-            res.status(401).send(err);
+      } else {
+        // As userSessions itself is also an array of objects (containing only one object), pull the object out from the array for ease of use.
+        user.userSession = user.userSession[0];
+        // User found, but no session found for the refreshToken
+        if (!user.userSession) {
+          return Promise.reject({
+            error: ERROR_MESSAGES.SESSION_NOT_FOUND,
+            errorCode: ERROR_CODES.SESSION_NOT_FOUND
           });
+        } else { // We've found the session with that refreshKey. Should never return more than one.
+          // Session is valid if it is at a later point in time than Date.now();
+          const isSessionValid = user.userSession.expiresAt >= Date.now();
+          // The session is valid. Call next() to continue with processing this web request.
+          if (isSessionValid) {
+            // We want to set a userObject in the request to contain an User instance with our user's details. We do this because the return of .aggregate is not an instance of an user, but a cursor of the result.
+            req.userObject = new User(user);
+            next();
+          } else { // Else return an error. We don't want to delete expired sessions automatically from here. MongoDb does that on a different timer.
+            return Promise.reject({
+              error: ERROR_MESSAGES.REFRESH_TOKEN_EXPIRED,
+              errorCode: ERROR_CODES.REFRESH_TOKEN_EXPIRED
+            });
+          }
         }
       }
-    })
-    .catch((err) => {
-      res.status(401).send(err);
-    })
+  }).catch((err) => {
+    console.error(err);
+    res.status(STATUS_CODES.UNAUTHORIZED).send(err);
+  });
 }
 
 
@@ -185,10 +193,9 @@ app.get('/lists', authenticate, (req, res) => {
   // We want to return an array of all the lists in the database that belong to the authenticated user.
   List.find({
     _userId: req.user_id
-  })
-    .then((lists) => {
-      res.send(lists)
-    });
+  }).then((lists) => {
+    res.send(lists)
+  });
 });
 
 /**
@@ -240,8 +247,7 @@ app.delete('/lists/:id', authenticate, (req, res) => {
   List.findOneAndRemove({
     _id: req.params.id,
     _userId: req.user_id
-  })
-    .then((removedListDoc) => {
+  }).then((removedListDoc) => {
       res.send(removedListDoc)
 
       // Delete all the tasks that are in the deleted list.
@@ -261,8 +267,7 @@ app.get('/lists/:listId/tasks', authenticate, (req, res) => {
   // We want to return all tasks that belong to a specific list (specified by listId).
   Task.find({
     _listId: req.params.listId
-  })
-    .then((tasks) => {
+  }).then((tasks) => {
       res.send(tasks);
     })
 })
@@ -276,8 +281,7 @@ app.get('/lists/:listId/tasks/:taskId', authenticate, (req, res) => {
   Task.findOne({
     _id: req.params.taskId,
     _listId: req.params.listId
-  })
-    .then((task) => {
+  }).then((task) => {
     res.send(task);
   });
 });
@@ -311,9 +315,8 @@ app.post('/lists/:listId/tasks', authenticate, (req, res) => {
           .then((newTaskDoc) => {
             res.send(newTaskDoc);
           });
-      } else 
-      {
-        res.sendStatus(404);
+      } else {
+        res.sendStatus(STATUS_CODES.BAD.NOT_FOUND);
       }
     });
 });
@@ -353,7 +356,7 @@ app.patch('/lists/:listId/tasks/:taskId', authenticate, (req, res) => {
             res.send(taskDoc);
           });
       } else {
-        res.sendStatus(404);
+        res.sendStatus(STATUS_CODES.BAD.NOT_FOUND);
       }
     });
 });
@@ -387,7 +390,7 @@ app.delete('/lists/:listId/tasks/:taskId', authenticate, (req, res) => {
             res.send(removedTaskDoc);
           });
       } else {
-        res.sendStatus(404);
+        res.sendStatus(STATUS_CODES.NOT_FOUND);
       }
     });
 });
@@ -425,7 +428,7 @@ app.post('/users', (req, res) => {
         .send(newUser);
     })
     .catch((err) => {
-      res.status(400).send(err);
+      res.status(STATUS_CODES.BAD_REQUEST).send(err);
     })
 });
 
@@ -457,7 +460,7 @@ app.post('/users/login', (req, res) => {
         });
     })
     .catch((err) => {
-      res.status(400).send(err);
+      res.status(STATUS_CODES.BAD_REQUEST).send(err);
     });
 });
 
@@ -467,33 +470,32 @@ app.post('/users/login', (req, res) => {
  */
 app.get('/users/me/access-token', verifySession, (req, res) => {
   // We know that the user/caller is authenticated and we have the user_id and userObject available to us.
+  console.log('req.userObject: ', req.userObject);
   req.userObject.generateAccessAuthToken()
     .then((accessToken) =>{
       res.header('x-access-token', accessToken).send({ accessToken });
     })
     .catch((err) => {
-      res.status(400).send(err);
+      res.status(STATUS_CODES.BAD_REQUEST).send(err);
     })
 });
 
 app.post('/users/logout', authenticate, (req, res) => {
   let refreshToken = req.header('x-refresh-token');
   let userId = req.header('_id')
-  console.log('id', userId);
-  console.log('refreshToken', refreshToken);
-  User.findOneAndUpdate({
-    _id: userId,
-    'sessions.token': refreshToken
-  }, {
-    $pull: {
-      sessions: { token: refreshToken }
+  // Search for the session.
+  Session.findOneAndDelete({
+    _userId: userId,
+    token: refreshToken
+  }).then((session) => {
+    // Session found, now delete it.
+    if (session) {
+      return res.send({ status: STATUS_CODES.OK, statusMessage: STATUS_MESSAGES.OK });
     }
-  }).then((user) => {
-    if (user) {
-      console.log('User: ', user);
-      return res.send({status: 200, statusMessage: 'OK'});
-    }
-    res.sendStatus(404);
+    // Otherwise session not found.
+    return res.send({ status: STATUS_CODES.NOT_FOUND, statusMessage: ERROR_MESSAGES.NOT_FOUND });
+  }).catch((err) => {
+    return res.send(err);
   });
 })
 
@@ -519,14 +521,15 @@ app.listen(3000, () => {
 /************************************************************
  ****************************ToDo****************************
 ************************************************************/
-// Change all new/edit pages to pop-up modals.  https://github.com/adriancttnc/task-manager/pull/1
-// Implement Logout.                            https://github.com/adriancttnc/task-manager/pull/2
-// Implement an emailing method.                https://github.com/adriancttnc/task-manager/pull/3
-// Implement forgot password.                   https://github.com/adriancttnc/task-manager/pull/3
-// Implement a notification mechanism.          https://github.com/adriancttnc/task-manager/pull/3
-// Implement an external config system.         https://github.com/adriancttnc/task-manager/pull/3
-// Change from using px to using rem.           https://github.com/adriancttnc/task-manager/pull/4
-// Add an user menu.                            https://github.com/adriancttnc/task-manager/pull/5
+// Change all new/edit pages to pop-up modals.                  https://github.com/adriancttnc/task-manager/pull/1
+// Implement Logout.                                            https://github.com/adriancttnc/task-manager/pull/2
+// Implement an emailing method.                                https://github.com/adriancttnc/task-manager/pull/3
+// Implement forgot password.                                   https://github.com/adriancttnc/task-manager/pull/3
+// Implement a notification mechanism.                          https://github.com/adriancttnc/task-manager/pull/3
+// Implement an external config system.                         https://github.com/adriancttnc/task-manager/pull/3
+// Change from using px to using rem.                           https://github.com/adriancttnc/task-manager/pull/4
+// Add an user menu.                                            https://github.com/adriancttnc/task-manager/pull/5
+// Move sessions to their own collection and set auto-expiry.   https://github.com/adriancttnc/task-manager/pull/6
 // ToDo - Ensure you can handle illegal Ids.
 // ToDo - Prevent failed calls to the backend. (You get a failed call whenever the access token expires and needs to be renewed)
 // ToDo - Implement a form component and use it throughout the app.

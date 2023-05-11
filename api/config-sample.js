@@ -30,8 +30,9 @@ module.exports = {
     password: ''
   },
   registration: {                           // Settings for the user registration.
-    refreshTokenLifespan:       10,         // Days for how long the refreshToken lasts.
-    accessTokenLifespan:        15,         // Minutes for how long the access token lasts.
+    refreshTokenLifespan:       '10d',      // Time for how long the refreshToken lasts.
+    refreshTokenDelete:         '30d',      // Time before the refreshToken is removed from db.
+    accessTokenLifespan:        '15m',      // Time for how long the access token lasts.
     forgotPasswordKeyLifespan:  '15s',      // Time for how long the forgot password key lasts. String along with the unit for others ('60s', '15m', '1h', '2d')
     bcryptCostFactor:           12,         // Value that specifies the power of 2 for the number of iterations when hashing the password.
     minPasswordLength: 8

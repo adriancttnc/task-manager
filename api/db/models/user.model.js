@@ -7,6 +7,10 @@ const bcrypt = require('bcryptjs');
 // eslint-disable-next-line spellcheck/spell-checker
 const jwtSecret = "51778657246321226641fsdklafjasdkljfsklfjd7148924065";
 const config = require('../../config');
+const util = require('../../srvControllers/shared/util');
+const { Session } =  require('./session.model');
+const { ERROR_MESSAGES } = require('../../srvControllers/shared/enums');
+
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -20,17 +24,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: config.registration.minPasswordLength
-  },
-  sessions: [{
-    token: {
-      type: String,
-      required: true
-    },
-    expiresAt: {
-      type: Number,
-      required: true
-    }
-  }]
+  }
 });
 
 /************************************************************
@@ -52,14 +46,14 @@ UserSchema.methods.generateAccessAuthToken = function () {
     jwt.sign(
       { _id: user._id.toHexString() },
       jwtSecret,
-      { expiresIn: `${config.registration.accessTokenLifespan}m` },
+      { expiresIn: config.registration.accessTokenLifespan },
       (err, token) => {
         if (!err) {
           // If there isn't an error.
           resolve(token);
         } else {
           // There is an error.
-          reject();
+          reject(err);
         }
     });
   });
@@ -92,7 +86,7 @@ UserSchema.methods.createSession = function () {
       return refreshToken;
     })
     .catch((err) => {
-      return Promise.reject('Failed to save session to database.\n', + err);
+      return Promise.reject(ERROR_MESSAGES.SESSION_SAVE_FAIL, + err);
     });
 };
 
@@ -104,13 +98,11 @@ UserSchema.statics.getJWTSecret = () => {
   return jwtSecret;
 }
 
-UserSchema.statics.findByIdAndToken = function (_id, token) {
+UserSchema.statics.findByIdAndToken = function (_userId, token) {
   // Finds user by id and token. Used in auth middleware (verifySession).
-  const user = this;
-
-  return user.findOne({
-    _id,
-    'sessions.token': token
+  return Session.findOne({
+    _userId: _userId,
+    token: token
   });
 };
 
@@ -175,11 +167,16 @@ UserSchema.pre('save', function (next) {
 let saveSessionToDatabase = (user, refreshToken) => {
   // Save session to database.
   return new Promise((resolve, reject) => {
-    let expiresAt = generateRefreshTokenExpiryTime();
+    // let expiresAt = generateRefreshTokenExpiryTime();
+    let expiresAt = util.addToNow(config.registration.refreshTokenLifespan);
 
-    user.sessions.push({ 'token': refreshToken, expiresAt });
+    const userSession = new Session({
+      _userId: user._id,
+      token: refreshToken,
+      expiresAt: expiresAt
+    });
 
-    user.save()
+    userSession.save()
       .then(() => {
         return resolve(refreshToken);
       })
@@ -187,12 +184,6 @@ let saveSessionToDatabase = (user, refreshToken) => {
         reject(err);
       })
   });
-};
-
-let generateRefreshTokenExpiryTime = () => {
-  let daysUntilExpiry = config.registration.refreshTokenLifespan;
-  let secondsUntilExpiry = ((daysUntilExpiry * 24) * 60) * 60;
-  return ((Date.now() / 1000) + secondsUntilExpiry);
 };
 
 const User = mongoose.model('User', UserSchema);

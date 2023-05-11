@@ -28,6 +28,7 @@
         "enum",
         "fs",
         "utf",
+        "destructure",
         "cors"
       ],
       "skipIfMatch": [
