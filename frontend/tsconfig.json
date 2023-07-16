@@ -25,7 +25,9 @@
     ],
     "paths": {
       "@interfaces/*": ["src/app/shared/interfaces/*"],
-      "@sharedServices/*": ["src/app/shared/services/*"]
+      "@sharedServices/*": ["src/app/shared/services/*"],
+      "@errorEnums": ["src/app/shared/enums/error"],
+      "@enums/*": ["src/app/shared/enums/*"],
     }
   },
   "angularCompilerOptions": {
