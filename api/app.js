@@ -13,6 +13,7 @@ const _ = require('underscore');
 const crypto = require('crypto');
 const emailService = require('./srvControllers/shared/emailService');
 const { ERROR_CODES, ERROR_MESSAGES, STATUS_CODES, STATUS_MESSAGES } = require('./srvControllers/shared/enums');
+const process = require('process')
 
 // Load in the mongoose Models
 const { List, Task, User, Session } =  require('./db/models');
