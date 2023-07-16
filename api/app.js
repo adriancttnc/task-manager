@@ -57,10 +57,14 @@ const checkConfigFilesMatch = async (configObj, configSampleObj) => {
   if (!_.isEqual(configKeys, configSampleKeys)) {
     console.log('================================================================================================');
     console.log('================================================================================================');
-    await errorLogger.handleBackendError(script, {
-      errorMessage: ERROR_MESSAGES.CONFIG_MISMATCH,
-      errorCode: ERROR_CODES.CONFIG_MISMATCH
-    });
+    await errorLogger.handleBackendError(
+      script,
+      { 
+        errorMessage: ERROR_MESSAGES.CONFIG_MISMATCH,
+        errorCode: ERROR_CODES.CONFIG_MISMATCH
+      },
+      'CHECK_CONFIG_FILES'
+    );
     throw new Error(ERROR_MESSAGES.CONFIG_MISMATCH);
   }
 }
