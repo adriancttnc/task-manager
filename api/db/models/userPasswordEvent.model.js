@@ -19,11 +19,15 @@ const UserPasswordEventSchema = new mongoose.Schema({
   // Automatically delete the document when the amount of time passed into expires passes(+ max 60s).
   expiresAt: {
     type: Date,
+    // This means that it will expire forgotPasswordKeyLifespan (in seconds) after the date in 'default' is reached.
     expires: config.registration.forgotPasswordKeyLifespan,
     default: () => util.addToNow(config.registration.forgotPasswordKeyLifespan)
   }
 });
 
 const UserPasswordEvent = mongoose.model('userPasswordEvents', UserPasswordEventSchema);
+
+// Ensure the indexes are always updated as per the schema above. A must have for any changes done to TTLs.
+UserPasswordEvent.syncIndexes();
 
 module.exports = { UserPasswordEvent }
