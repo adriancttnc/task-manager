@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Task } from './models/task.model';
+import { Task } from '@interfaces/task';
 import { WebRequestService } from './web-request.service';
 
 @Injectable({

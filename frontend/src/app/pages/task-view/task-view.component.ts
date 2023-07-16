@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { List } from 'src/app/models/list.model';
-import { Task } from 'src/app/models/task.model';
-import { ModalService } from 'src/app/shared/services/modal.service';
+import { List } from '@interfaces/list';
+import { Task } from '@interfaces/task';
+import { ModalService } from '@sharedServices/modal.service';
 import { TaskService } from 'src/app/task.service';
 import { EditListComponent } from '../edit-list/edit-list.component';
 import { EditTaskComponent } from '../edit-task/edit-task.component';
