@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,17 @@ export class WebRequestService {
   ) { }
 
   get (uri: string) {
-    return this.http.get<any>(`${this.ROOT_URL}/${uri}`);
+    return this.http.get<any>(`${this.ROOT_URL}/${uri}`).pipe(
+      map((result) => {
+        if (result.error) {
+          return [];
+        } else {
+          return result
+        }
+      })
+    );
   }
-  
+
   post (uri: string, payload: object) {
     return this.http.post<any>(`${this.ROOT_URL}/${uri}`, payload);
   }
@@ -59,4 +68,14 @@ export class WebRequestService {
       confirmPassword
     });
   }
+
+  getNewAccessToken (refreshToken: string, _id: string) {
+    return this.http.get(`${this.ROOT_URL}/users/me/access-token`, {
+      headers: {
+        'x-refresh-token': refreshToken,
+        '_id': _id
+      }
+    });
+  }
+
 }

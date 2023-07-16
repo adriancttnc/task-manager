@@ -9,16 +9,17 @@ import { AuthService } from 'src/app/auth.service';
 })
 export class LoginComponent {
 
+  loginObs: any;
+
   constructor (
     private authService: AuthService
   ) {}
 
   onLoginButtonClick (email: string, password: string) {
-    console.log('Login button Clicked');
-    this.authService.login(email, password)
+    this.loginObs = this.authService.login(email, password)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .subscribe((res: HttpResponse<any>) => {
-        console.log('res', res);
+        this.loginObs.unsubscribe();
       })
   }
 

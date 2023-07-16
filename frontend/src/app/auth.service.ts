@@ -2,7 +2,7 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { catchError, of, tap } from 'rxjs';
 import { WebRequestService } from './web-request.service';
 import { SnackbarService } from './shared/services/snackbar.service';
 @Injectable({
@@ -103,12 +103,10 @@ export class AuthService {
   }
 
   getRefreshToken () {
-    console.log('authService.getRefreshToken: ', localStorage.getItem('x-refresh-token'));
     return localStorage.getItem('x-refresh-token');
   }
 
   getUserId () {
-    console.log('authService.getUserId: ', localStorage.getItem('user-id'));
     return localStorage.getItem('user-id');
   }
 
@@ -126,19 +124,16 @@ export class AuthService {
   }
 
   getNewAccessToken () {
-    return this.http.get(
-      `${this.webService.ROOT_URL}/users/me/access-token`, {
-        headers: {
-          'x-refresh-token': this.getRefreshToken()!,
-          '_id': this.getUserId()!
-      },
-      observe: 'response'
-  }).pipe(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tap((res: HttpResponse<any>) => {
-      this.setAccessToken(res.headers.get('x-access-token'))
-    })
-  )
+    return this.webService.getNewAccessToken(this.getRefreshToken()!, this.getUserId()!)
+      .pipe(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        tap((res: any) => {
+          this.setAccessToken(res.accessToken);
+        }),
+        catchError(() => {
+          return of({});
+        })
+      )
   }
 
 }

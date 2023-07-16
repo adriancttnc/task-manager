@@ -29,6 +29,7 @@
         "fs",
         "utf",
         "destructure",
+        "frontend",
         "cors"
       ],
       "skipIfMatch": [

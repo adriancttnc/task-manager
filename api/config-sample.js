@@ -29,6 +29,12 @@ module.exports = {
     username: '',
     password: ''
   },
+  logging: {                          // Settings for logging Node.js outputs and errors.
+    logErrorsToFile: true,            // If enabled, logs errors to file. Default true.
+    logServerOutputToFile: true,      // If enabled, logs console.log() to file. Default true.
+    errorLogFilePath: '',
+    serverLogfilePath: ''
+  },
   registration: {                           // Settings for the user registration.
     refreshTokenLifespan:       '10d',      // Time for how long the refreshToken lasts.
     refreshTokenDelete:         '30d',      // Time before the refreshToken is removed from db.

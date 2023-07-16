@@ -2,8 +2,9 @@
 
 import { HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, empty, Observable, Subject, switchMap, tap, throwError } from 'rxjs';
+import { catchError, Observable, of, Subject, switchMap } from 'rxjs';
 import { AuthService } from './auth.service';
+import { ERROR_CODES } from '@errorEnums';
 
 @Injectable({
   providedIn: 'root'
@@ -26,11 +27,11 @@ export class WebReqInterceptor implements HttpInterceptor {
     return next.handle(request)
       .pipe(
         catchError((err: HttpErrorResponse) => {
-          if (err.status === 401) {
-            // 401 error - we are unauthorized.
+          if (err.error.errorCode === ERROR_CODES.ACCESS_TOKEN_EXPIRED) {
+            // 10004 - access code has expired.
 
             // Refresh the access token. If that fails, then logout.
-            return this.refreshAccessToken()
+            return this.authService.getNewAccessToken()
               .pipe(
                 switchMap(() => {
                   request = this.addAuthHeader(request);
@@ -38,36 +39,14 @@ export class WebReqInterceptor implements HttpInterceptor {
                 }),
                 catchError(() => {
                   this.authService.removeSession();
-                  return empty();
+                  return of();
                 })
-              )
+              );
           }
-          return throwError(() => err);
+          this.authService.removeSession();
+          return of();
         })
       )
-  }
-
-  refreshAccessToken () {
-    if (this.refreshingAccessToken) {
-      return new Observable(observer => {
-        this.accessTokenRefreshed.subscribe(() => {
-          // This code will run when the access token has been refreshed.
-          observer.next();
-          observer.complete();
-        })
-      })
-    } else {
-      this.refreshingAccessToken = true;
-      // We want to call a function in the auth service to send a request to refresh the access token.
-      return this.authService.getNewAccessToken()
-        .pipe(
-          tap(() => {
-            console.log('Access Token Refreshed');
-            this.refreshingAccessToken = false;
-            this.accessTokenRefreshed.next(true);
-          })
-        )
-    }
   }
 
   addAuthHeader (request: any) {
