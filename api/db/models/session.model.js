@@ -19,13 +19,17 @@ const SessionSchema = new mongoose.Schema({
   // Automatically delete the document when the amount of time passed into expires passes(+ max 60s).
   deleteOn: {
     type: Date,
-    expires: config.registration.refreshTokenLifespan,
+    // This means that it will expire 0 seconds after the date in 'default' is reached.
+    expires: 0,
     default: util.addToNow(config.registration.refreshTokenDelete)
   }
 });
 
 
 const Session = mongoose.model('Session', SessionSchema);
+
+// Ensure the indexes are always updated as per the schema above. A must have for any changes done to TTLs.
+Session.syncIndexes();
 
 module.exports = {
   Session
