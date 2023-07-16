@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { List } from 'src/app/models/list.model';
+import { List } from '@interfaces/list';
 import { TaskService } from 'src/app/task.service';
 
 @Component({
